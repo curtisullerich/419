@@ -1,0 +1,19 @@
+
+#transferring to server
+curtis@curtos:~/git/419/lab1$ scp -i ~/.ssh/hadoop_rsa /home/curtis/git/419/lab1/Checksum.java curtisu@170.224.166.210:/home/curtisu/
+Checksum.java                                         100%  841     0.8KB/s   00:00    
+
+#running the program
+
+[curtisu@vhost1740 ~]$ javac -classpath /mnt/biginsights/opt/ibm/biginsights/IHC/hadoop-core-1.0.0.jar -d class/ Checksum.java 
+[curtisu@vhost1740 ~]$ jar -cvf Checksum.jar -C class/ . 
+added manifest 
+adding: lab1/(in = 0) (out= 0)(stored 0%) 
+adding: lab1/HDFSWrite.class(in = 885) (out= 524)(deflated 40%) 
+adding: HDFSWrite.class(in = 880) (out= 522)(deflated 40%) 
+adding: Checksum.class(in = 1382) (out= 784)(deflated 43%)
+[curtisu@vhost1740 ~]$ hadoop jar Checksum.jar Checksum 
+Checksum: 4 
+
+
+
