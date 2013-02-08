@@ -1,0 +1,41 @@
+Lab 2 Summary
+Curtis Ullerich
+SE 419X
+1/31/13
+
+
+See Bigrams.txt for my commented code.
+
+Note that I considered all non-alphanumeric characters to be word delimiters,
+and {? ! .} to be sentence delimeters. This is why "i ll" appears as a common
+bigram for Shakespeare.
+
+---------------------------------
+-- Sheakespeare Corpus Results --
+---------------------------------
+i am    1865
+i ll    1804
+in the  1709
+my lord 1701
+to the  1659
+i have  1611
+i will  1555
+of the  1509
+to be   1003
+it is   1091
+
+------------------------------
+-- Gutenberg Corpus Results --
+------------------------------
+of the  1424285
+in the  757107
+to the  569469
+and the 393322
+on the  300222
+to be   286655
+it is   273213
+of a    255338
+it was  240200
+for the 234770
+
+

@@ -1,0 +1,185 @@
+original input 
+a b
+b c 
+a c
+
+map1 output
+emit(a, >b); emit(b, <a);
+emit(b, >c); emit(c, <b);
+emit(a, >c); emit(c, <a);
+
+
+reduce1 input
+a: (>b, >c)
+b: (<a, >c)
+c: (<b, <a)
+
+reduce1 output
+echo
+
+map2 output
+b: (a)
+c: (a)
+b: (a)
+c: (ab)
+c: (b)
+c: (b)
+c: (a)
+
+
+-----------------------------
+original input
+a b
+a c
+b c
+b f
+b e
+c d
+f e
+
+map1 output
+a, >b
+b, <a
+a, >c
+c, <a
+b, >c
+c, <b
+b, >f
+f, <b
+b, >e
+e, <b
+c, >d
+d, <c
+f, >e
+e, <f
+
+reduce1 input
+a: (>b, >c)
+b: (<a, >c, >f, >e)
+c: (<a, <b, >d)
+d: (<c)
+f: (<b, >e)
+e: (<b, <f)
+
+reduce1 output:
+echo
+
+map2 output
+b, a
+c, a
+
+c, b
+c, ab
+f, b
+f, ab
+e, b
+e, ab
+b, a
+
+d, c
+d, ac
+d, bc
+c, a
+c, b
+
+d, c
+
+e, f
+e, fb
+f, b
+
+e, b
+e, f
+
+
+reduce2 input
+b: (a, 
+c: (a, b, ab
+d: (c, ac, bc
+f: (b, ab, 
+e: (b, ab, f, fb
+--------------------------- Experiment 2 -------------------------
+original input:
+a b
+a c
+b c
+b f
+b e
+c d
+f e
+
+map1 output:
+<pairs>
+
+reduce1 input:
+a: (b, c)
+b: (a, c, f, e)
+c: (a, b, d)
+d: (c)
+e: (b, f)
+f: (b, e)
+
+reduce1 output:
+(just remove all nodes with only one neighbor
+a: (b, c)
+b: (a, c, f, e)
+c: (a, b, d)
+e: (b, f)
+f: (b, e)
+
+
+map2 output:
+
+ab    have
+ab    have
+ab    c
+ac    have
+ac    have
+ac    b
+ad    c
+ae    b
+af    b
+bc    a
+bc    have
+bc    have
+be    have
+be    f
+be    have
+bf    have
+bf    e
+bf    have
+cd    have
+ce    b
+cf    b
+ef    have
+ef    have
+ef    b
+
+reduce2 input:
+a-b: (have, c)
+a-c: (have, b)
+a-d: (c)
+a-e: (b)
+a-f: (b)
+b-e: (have, f)
+b-c: (a, have)
+b-f: (have, e)
+c-e: (b)
+c-f: (b)
+e-f: (have, b)
+
+reduce 2 output:
+abc
+acb*
+bef
+bca*
+bfe*
+efb*
+*don't output because it's out of order
+
+map/reduce3
+just filter for dupes and count
+
+
+
+
