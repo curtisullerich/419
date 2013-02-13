@@ -15,35 +15,33 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 /**
  * @author Curtis Ullerich <curtisu@iastate.edu>
  */
-public class Triangles extends Configured implements Tool {
+public class Hops extends Configured implements Tool {
 	
 	public static void main ( String[] args ) throws Exception {
 		
-		int res = ToolRunner.run(new Configuration(), new Triangles(), args);
+		int res = ToolRunner.run(new Configuration(), new Hops(), args);
 		System.exit(res); 
 		
 	} // End main
 	
 	public int run ( String[] args ) throws Exception {
 		
-		String input =  "/datasets/Lab3/Graph";    
-		//String input =  "/users/curtisu/lab3/dat2";
+		String input =  "/datasets/Lab3/Graph";    // Change this accordingly
+		//String input =  "/users/curtisu/lab3/dat2";    // Change this accordingly
+		String temp =   "/users/curtisu/lab3/exp1.24tmp";  // Change this accordingly
+		String temp2 =   "/users/curtisu/lab3/exp1.24tmp2";  // Change this accordingly
+		String output = "/users/curtisu/lab3/exp1.24output";  // Change this accordingly
 		
-		String base = "/users/curtisu/lab3/exp2/10/";
-		String temp = base + "tmp";
-		String temp2 = base + "tmp2";
-		String output = base + "output";
-		
-		int reduce_tasks = 3;  // The number of reduce tasks that will be assigned to the job
+		int reduce_tasks = 2;  // The number of reduce tasks that will be assigned to the job
 		Configuration conf = new Configuration();
 		
 		// Create job for round 1
 		
 		// Create the job
-		Job job_one = new Job(conf, "Triangles Program Round One"); 
+		Job job_one = new Job(conf, "Hops Program Round One"); 
 		
 		// Attach the job to this Bigrams
-		job_one.setJarByClass(Triangles.class); 
+		job_one.setJarByClass(Hops.class); 
 		
 		// Fix the number of reduce tasks to run
 		// If not provided, the system decides on its own
@@ -91,8 +89,8 @@ public class Triangles extends Configured implements Tool {
 		// The output of the previous job can be passed as the input to the next
 		// The steps are as in job 1
 		
-		Job job_two = new Job(conf, "Triangles Program Round Two"); 
-		job_two.setJarByClass(Triangles.class);
+		Job job_two = new Job(conf, "Hops Program Round Two"); 
+		job_two.setJarByClass(Hops.class);
 		job_two.setNumReduceTasks(reduce_tasks); 
 		
 		job_two.setOutputKeyClass(Text.class); 
@@ -102,7 +100,7 @@ public class Triangles extends Configured implements Tool {
 		// Will depend on logic if separate Map / Reduce classes are needed
 		// Here we show separate ones
 		job_two.setMapperClass(Map_Two.class); 
-		job_two.setReducerClass(Reduce_Two.class); 
+		job_two.setReducerClass(Reduce_One.class); //TODO intentionally used the same reducer twice!
 		
 		job_two.setInputFormatClass(TextInputFormat.class); 
 		job_two.setOutputFormatClass(TextOutputFormat.class);
@@ -114,8 +112,8 @@ public class Triangles extends Configured implements Tool {
 		// Run the job
 		job_two.waitForCompletion(true); 
 		
-		Job job_three = new Job(conf, "Triangles Program Round Three");
-		job_three.setJarByClass(Triangles.class);
+		Job job_three = new Job(conf, "Hops Program Round Three");
+		job_three.setJarByClass(Hops.class);
 		job_three.setNumReduceTasks(1);
 		job_three.setOutputKeyClass(Text.class);
 		job_three.setOutputValueClass(IntWritable.class);
@@ -144,25 +142,9 @@ public class Triangles extends Configured implements Tool {
 			String a = line[0];
 			String b = line[1];
 			
-			
-			//only write if it's in sorted order to eliminate duplicates
-			if (a.compareTo(b) != 0) {
-			  context.write(new Text(a), new Text(b));
-			  context.write(new Text(b), new Text(a));
-			} else {
-			  //context.write(new Text("removed"), new Text(a + "," +b));
-			}
-      /*			
-			int result = a.compareTo(b);
-			
-			if (result < 0) {
-			  context.write(new Text(a), new Text(b));
-			} else if (result > 0) {
-			  context.write(new Text(b), new Text(a));
-			} else {
-			  //they're identical. do not want.
-			}
-			*/
+			// use > and < to indicate downstream and upstream from the key, respectively
+      context.write(new Text(a), new Text(">"+b));
+      context.write(new Text(b), new Text("<"+a));
 		} 
 	} 
 	
@@ -172,117 +154,59 @@ public class Triangles extends Configured implements Tool {
 											throws IOException, InterruptedException  {
 
       String cat = "";
-      int count = 0;
       //sum the values and regurgitate			
 			for (Text val : values) {
 			  cat += val + ",";
-			  count++;
 			}
 			
-			if (count < 2) {
-			  //no triangles are possible
-  			//context.write(key, new Text("removed: " + cat));
-			} else {
-  			cat = cat.substring(0, cat.length()-1);
-        context.write(key, new Text(cat));
-			}
+			cat = cat.substring(0, cat.length()-1);
 			
+      context.write(key, new Text(cat));
 		} 
 		
 	} 
 	
 	public static class Map_Two extends Mapper<LongWritable, Text, Text, Text>  {
 		
-		private Text have = new Text("have");
-		
 		public void map(LongWritable key, Text value, Context context) 
 				throws IOException, InterruptedException  {
 		  
 		  String line[] = value.toString().split("\t");
-		  String v = line[0];
+		  String middle = line[0];
 		  String values[] = line[1].split(",");
 
-      //the set of edges that do exist
-      Set<String> haves = new HashSet<String>(values.length);
-
+      //find the set of upstream and downstream vertices
+      Set<String> upstreams = new HashSet<String>();
+      Set<String> downstreams = new HashSet<String>();
       for (String s : values) {
-        if (v.compareTo(s) < 0) {
-          haves.add(v+"-"+s);
+        if (s.charAt(0) == '<') {
+          upstreams.add(s);
         } else {
-          haves.add(s+"-"+v);
+          downstreams.add(s);
         }
       }
-      
-      for (String s : haves) {
-        context.write(new Text(s), new Text(have));
-      }
-      
-      //the set of edges that we want to exist
-      Set<String> havenots = new HashSet<String>(values.length);
-      
-      for (int i = 0; i < values.length; i++) {
-        for (int j = i+1; j < values.length; j++) {
-          if (values[i].compareTo(values[j]) < 0) {
-            havenots.add(values[i] + "-" + values[j]);
-            //TODO might be adding values like "c-c" here
-          } else {
-            havenots.add(values[j] + "-" + values[i]);
-          }
-        }
-      }
-      
-      for (String s : havenots) {
-        context.write(new Text(s), new Text(v));
-      }
-      
+
+      Set<String> outputs = new HashSet<String>();
+      //build all possible edge sets of one and two hops
+		  for (String up : upstreams) {
+		    for (String down : downstreams) {
+		      context.write(new Text(down.substring(1)), new Text(middle));
+		      context.write(new Text(down.substring(1)), new Text(up.substring(1)+"-"+middle));
+		      context.write(new Text(middle), new Text(up.substring(1)));
+		    }
+		  }
 		}
 	}  
 	
-	
+	/* I'm re-using Reduce_One here instead
 	public static class Reduce_Two extends Reducer<Text, Text, Text, IntWritable>  {
-		
-		private IntWritable one = new IntWritable(1);
-		private Text a = new Text("a");
 		
 		public void reduce(Text key, Iterable<Text> values, Context context) 
 				throws IOException, InterruptedException  {
-			
-		  Set<String> tris = new HashSet<String>();
-		  Set<String> wants = new HashSet<String>();
-	    String pair[] = key.toString().split("-");
-	    String a = pair[0];
-	    String b = pair[1];
-	    
-	    boolean has = false;
-		  for (Text t : values) {
-		    String s = t.toString();
-		    if (s.equals("have")) {
-		      has = true;
-		    } else {
-		      wants.add(s);
-		    }
-		  }
-		  
-		  if (has) {
-		    for (String c : wants) {
-		    
-		      //add only if in sorted order to eliminate duplicates, again
-		      if (a.compareTo(b) < 0 && b.compareTo(c) < 0) {
-		        tris.add(a + "-" + b + "-" + c);
-		      }
-		    }
-		    
-		    for (String s : tris) {
-		       context.write(new Text(s), one);// to write the triangle
-		      //context.write(a, one);
-		    }
-		  } else {
-		    //the desired edge does not exist
-		    //output nothing
-		  }
+		  context.write(
 		} 
 		
-	}  
+	} */ 
 	public static class Map_Three extends Mapper<LongWritable, Text, Text, Text>  {
 
     Text t = new Text("key");
@@ -290,8 +214,21 @@ public class Triangles extends Configured implements Tool {
 		public void map(LongWritable key, Text value, Context context) 
 								throws IOException, InterruptedException  {
 		  String line[] = value.toString().split("\t");
+		  //Text keytext = new Text(line[0]);
+		  String values[] = line[1].split(",");
 		  
-      context.write(t, new Text(line[0]));
+		  Set<String> vals = new HashSet<String>();
+		  
+      for (String s : values) {
+        //split around the vertex delimiter so I can count the unique
+        //vertices, not just one-hops and two-hops separately
+        String patents[] = s.split("-");
+        for (String u : patents) {
+          vals.add(u);
+        }
+        //vals.add(s);
+      }
+      context.write(t, new Text(line[0] + "&" + vals.size()));
 		}
 	} 
 	
@@ -299,11 +236,48 @@ public class Triangles extends Configured implements Tool {
 		
 		public void reduce(Text key, Iterable<Text> values, Context context)
 											throws IOException, InterruptedException {
-      int count = 0;
-		  for (Text t : values) {
-		    count++;
-		  }
-		  context.write(new Text("Triangles"), new IntWritable(count));
+
+      //count them all
+      //keep track of the ten highest value so far
+      Map<String,Integer> best = new HashMap<String, Integer>();
+
+			for (Text t : values) {
+			  String s = t.toString();
+
+			  //each line is of format "0934-091348 \t 9001"
+			  String splitval[] = s.split("&");
+        int val = Integer.parseInt(splitval[1]);
+        String patent = splitval[0];
+
+		    if (best.size() < 10) {
+		      //for the first ten values
+		      best.put(patent, val);
+		    } else {
+		    
+		      //find the current minimum out of the top ten
+          Map.Entry<String,Integer> min = null;
+          for (Map.Entry<String,Integer> e : best.entrySet()) {
+            if (min == null) {
+              //for the first value
+              min = e;
+            } else {
+		          if (e.getValue() < min.getValue()) {
+		            min = e;
+		          }
+		        }
+          }
+          // we have the min. See if we just found a better value.
+          if (val > min.getValue()) {
+            best.remove(min.getKey());
+            best.put(patent, val);
+          }
+		    }
+			}
+
+			//echo the top ten values to the file
+			for (Map.Entry<String, Integer> e : best.entrySet()) {
+			  context.write(new Text(e.getKey()), new IntWritable(e.getValue()));
+			}
 		}
 	}
 }
