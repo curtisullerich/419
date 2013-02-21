@@ -1,0 +1,16 @@
+input to mapper 1:
+123454-this is a really long document and stuff
+
+output of mapper 1:
+minhash, 123454-this is a really long document and stuff
+
+input to reducer 1:
+minhash: (12345-this is a really long document and stuff, 12356-hello i am another document, 65988-docoasdpoiapdsifn , 32165-I LIEK MILK)
+
+perform jaccard comparison
+output CLUSTER(id1,id2,id3):summarydocument
+output MISFIT(id):document
+
+map 2: send all to same reducer (may have memory issues)
+reduce 2: compare all misfits to all clusters, and include each misfit with the most likely cluster
+
