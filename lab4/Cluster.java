@@ -119,8 +119,8 @@ public class Cluster extends Configured implements Tool {
 	public static class Map_One extends Mapper<LongWritable, Text, Text, Text>  {
 
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException  {
-			int k = 4; //the number of hash functions to use in the combined key
-			int hashes[] = new int[10];
+			int k = 9; 
+			int hashes[] = new int[4]; //the number of hash functions to use in the combined key
 			String line = value.toString();
 
 			String id = "";
@@ -131,7 +131,7 @@ public class Cluster extends Configured implements Tool {
 			for (int j = 0; j < hashes.length; j++) {
 				hashes[j] = Map_One.hash(firstShingle.getBytes(), j);
 			}
-
+			//int seeds[] = {42, 17, 100, 7, 13, 21};
 			//hash all shingles
 			for (int i = line.indexOf('-')+1; i < line.length()-k+1; i++) {
 				String shingle = line.substring(i, i+k);

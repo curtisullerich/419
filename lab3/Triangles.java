@@ -144,8 +144,6 @@ public class Triangles extends Configured implements Tool {
 			String a = line[0];
 			String b = line[1];
 			
-			
-			//only write if it's in sorted order to eliminate duplicates
 			if (a.compareTo(b) != 0) {
 			  context.write(new Text(a), new Text(b));
 			  context.write(new Text(b), new Text(a));
@@ -202,7 +200,6 @@ public class Triangles extends Configured implements Tool {
 		  String v = line[0];
 		  String values[] = line[1].split(",");
 
-      //the set of edges that do exist
       Set<String> haves = new HashSet<String>(values.length);
 
       for (String s : values) {
@@ -217,7 +214,6 @@ public class Triangles extends Configured implements Tool {
         context.write(new Text(s), new Text(have));
       }
       
-      //the set of edges that we want to exist
       Set<String> havenots = new HashSet<String>(values.length);
       
       for (int i = 0; i < values.length; i++) {
@@ -265,11 +261,34 @@ public class Triangles extends Configured implements Tool {
 		  
 		  if (has) {
 		    for (String c : wants) {
-		    
-		      //add only if in sorted order to eliminate duplicates, again
 		      if (a.compareTo(b) < 0 && b.compareTo(c) < 0) {
 		        tris.add(a + "-" + b + "-" + c);
 		      }
+		      /*
+		      String tri = "";
+		      if (a.compareTo(b) < 0 && a.compareTo(c) < 0) {
+		        tri += a + "-";
+		        if (b.compareTo(c) < 0) {
+		          tri += b + "-" + c;
+		        } else {
+		          tri += c + "-" + b;
+		        }
+		      } else if (b.compareTo(a) < 0 && b.compareTo(c) < 0) {
+		        tri += b + "-";
+		        if (a.compareTo(c) < 0) {
+		          tri += a + "-" + c;
+		        } else {
+		          tri += c + "-" + a;
+		        }
+		      } else {
+		        tri += c + "-";
+		        if (a.compareTo(b) < 0) {
+		          tri += a + "-" + b;
+		        } else {
+		          tri += b + "-" + a;
+		        }
+		      }
+		      tris.add(tri);*/
 		    }
 		    
 		    for (String s : tris) {
