@@ -1,0 +1,27 @@
+Curtis Ullerich
+SE 419X
+Lab 4
+2/22/13
+
+Map 1:
+- find z (4) minhashes over k (9) shingles in each document
+- output in the form <"hash0,hash1,hash2,hash3", documentID-ioubfhafo8a7wergiyvakfbalfiufhiSUYFGLIUF>
+
+Reduce 1:
+- Aggregate all documents with z identical hashes, choosing a summary document for the cluster
+- output in the form <"hash0,hash1,hash2,hash3", "documentID0,documentID1,documentID2     ioubfhafo8a7wergiyvakfbalfiufhiSUYFGLIUF">
+
+Map 2:
+- Echo the values with a common key
+- output in the form <"key", unaltered value>
+
+Reduce 2:
+- Parse all lines into instances of Datum, which represent a cluster
+- Combine all clusters that contain a specific ratio or more of hashes (1/2 in this case, or 2)
+- I check if there are any small clusters remaining (clusters with a size <70% of the maximum cluster size). If there are, I divide them into "keepers" and "misfits"
+- I attempt to combine any misfits into keepers by slowly reducing the number of hashes by which the two clusters must match to 1
+- If misfits still remain, I combine them with the cluster with which they have the highest Jaccard similarity.
+- output in the form <"documentID0, documentID1, documentID2", ioubfhafo8a7wergiyvakfbalfiufhiSUYFGLIUF>
+
+
+Note that I understand that my later steps in reduce 2 for combining misfits are not necessary for this dataset. I believe that such steps would be useful on real-world data, so I included them in my solution.
