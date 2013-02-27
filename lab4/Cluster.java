@@ -119,7 +119,7 @@ public class Cluster extends Configured implements Tool {
 	public static class Map_One extends Mapper<LongWritable, Text, Text, Text>  {
 
 		public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException  {
-			int k = 9; 
+			int k = 9;  //the size of the char-shingle
 			int hashes[] = new int[4]; //the number of hash functions to use in the combined key
 			String line = value.toString();
 
@@ -137,6 +137,8 @@ public class Cluster extends Configured implements Tool {
 				String shingle = line.substring(i, i+k);
 				for (int j = 0; j < hashes.length; j++) {
 					int h = hash(shingle.getBytes(), j);
+
+					//always keep the mins
 					if (h < hashes[j]) {
 						hashes[j] = h;
 					}
