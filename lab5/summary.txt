@@ -1,0 +1,29 @@
+Curtis Ullerich
+SE 419X
+Lab 5
+
+----------------------
+---- Experiment 1 ----
+----------------------
+AK  1477953211577
+TX  676586997978
+
+----------------------
+---- Experiment 2 ----
+----------------------
+241.46.188.127  12863
+241.46.218.115  7626
+241.46.218.114  7079
+238.109.212.180 6301
+238.109.212.178 5942
+162.131.175.231 5664
+0.3.117.73  5145
+241.46.185.161  4153
+245.51.17.193 3157
+143.69.163.4  3096
+
+----------------------
+---- Experiment 3 ----
+----------------------
+Output for part A: http://vhost0645.site1.compute.ihost.com:50075/browseDirectory.jsp?dir=%2Fusers%2Fcurtisu%2FLab5%2Fexp3%2Ffirewall&namenodeInfoPort=50070
+Output for part B: http://vhost0645.site1.compute.ihost.com:50075/browseDirectory.jsp?dir=%2Fusers%2Fcurtisu%2FLab5%2Fexp3%2Foutput&namenodeInfoPort=50070

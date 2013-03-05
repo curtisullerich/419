@@ -1,0 +1,31 @@
+419X notes 3/5/13
+
+----------
+Data model
+----------
+HDFS -> sequence of bytes
+MapReduce => set of (key, val) pairs
+Hive -> Table = a set of rows. Row = assignment of values to multiple attributes: k-tuple.
+
+
+--------------
+Operator Model 
+--------------
+Map Reduce ------ (Imperative)
+ |               \
+ Per tuple      group by transformation
+
+ Hive (Declarative):
+ Select
+ From 1 or more tables
+  Where (boolean predicates)
+
+---------------------------------------------------------------------------------
+Stonebraker & Dewitt argue that databases have been outmoded.
+
+Mapreduce + databases. greenplum (emc), aster data systems (teradata)
+
+Kroxldyphive
+
+
+map reduce is good for joins with an equality predicate. 

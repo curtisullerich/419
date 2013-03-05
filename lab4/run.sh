@@ -1,1 +1,1 @@
-hadoop jar Cluster.jar Cluster "/datasets/Lab4/test-files" "01"
+hadoop jar Cluster.jar Cluster "/datasets/Lab4/group-files" "01"

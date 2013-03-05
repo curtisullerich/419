@@ -25,3 +25,4 @@ Reduce 2:
 
 
 Note that I understand that my later steps in reduce 2 for combining misfits are not necessary for this dataset. I believe that such steps would be useful on real-world data, so I included them in my solution.
+Also note that I understand that minhashes are used as a heuristic for similarity, and not an acid test. For this contrived data set, however, this heuristic is enough for perfect clustering. In a real world data set (depending on the application) I would include a step to verify similarity of candidate pairs, probably using the Jaccard distance.
