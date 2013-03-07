@@ -8,6 +8,8 @@ Lab 5
 AK  1477953211577
 TX  676586997978
 
+See exp1.pig for code.
+
 ----------------------
 ---- Experiment 2 ----
 ----------------------
@@ -17,13 +19,20 @@ TX  676586997978
 238.109.212.180 6301
 238.109.212.178 5942
 162.131.175.231 5664
-0.3.117.73  5145
+0.3.117.73      5145
 241.46.185.161  4153
-245.51.17.193 3157
-143.69.163.4  3096
+245.51.17.193   3157
+143.69.163.4    3096
+
+See exp2.pig for code.
 
 ----------------------
 ---- Experiment 3 ----
 ----------------------
 Output for part A: http://vhost0645.site1.compute.ihost.com:50075/browseDirectory.jsp?dir=%2Fusers%2Fcurtisu%2FLab5%2Fexp3%2Ffirewall&namenodeInfoPort=50070
+See exp3.a.pig for code.
+
 Output for part B: http://vhost0645.site1.compute.ihost.com:50075/browseDirectory.jsp?dir=%2Fusers%2Fcurtisu%2FLab5%2Fexp3%2Foutput&namenodeInfoPort=50070
+See exp3.b.pig for code.
+
+My final, combined solution is in exp3.final.pig.
