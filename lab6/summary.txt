@@ -1,0 +1,34 @@
+hive> SHOW TABLES;
+OK
+census
+census_external
+Time taken: 0.226 seconds
+
+hive> DESCRIBE census;
+OK
+state string  
+geoid string  
+pop string  
+hu  string  
+aland bigint  
+awater  bigint  
+alandsqmi bigint  
+awatersqmi  bigint  
+latitude  float 
+longitude float 
+Time taken: 0.427 seconds
+
+hive> DESCRIBE census_external;
+OK
+state string  
+geoid string  
+pop string  
+hu  string  
+aland bigint  
+awater  bigint  
+alandsqmi bigint  
+awatersqmi  bigint  
+latitude  float 
+longitude float 
+Time taken: 0.406 seconds
+
