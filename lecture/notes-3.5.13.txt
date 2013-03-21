@@ -29,3 +29,20 @@ Kroxldyphive
 
 
 map reduce is good for joins with an equality predicate. 
+
+views:
+create a temporary table that derives from another table
+create view oldsailors AS select * FROM Sailors Where Sailors.age > 60
+
+Subquery:
+select * from Sailors where Sailors.age = (Select max(age) from Sailors)
+
+
+
+read about subqueries vs views
+
+---------------------------------------------------------------------------------
+random sampling:
+can sample 1 of every n seconds
+can sample every record with probability 1/n
+m/n bytes taken in both cases.
