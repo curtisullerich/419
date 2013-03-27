@@ -1,0 +1,1 @@
+	@$(CXX) $(SPL_CXXFLAGS) -o bin/BeJyz8CvNTUotSk2JBwAT_1gPK.dpe -fPIC -shared $(PEBeJyz8CvNTUotSk2JBwAT_1gPK) $(SPL_LDFLAGS)

@@ -1,0 +1,4 @@
+The Unix utility "cat" is so called
+because it can con"cat"enate files.
+Our program behaves like "cat -n",
+listing one file and numbering lines.

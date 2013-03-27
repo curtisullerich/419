@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<enumerationModel xmlns="http://www.ibm.com/xmlns/prod/streams/spl/enumeration" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <class>BeJyrNI03TsrMM03KyU_1ONk4uLjPJycxLNS6pKAEAfjkJCo</class>
+
+  <enumerators>
+    <enumerator>
+      <name>bin</name>
+    </enumerator>
+    <enumerator>
+      <name>block</name>
+    </enumerator>
+    <enumerator>
+      <name>csv</name>
+    </enumerator>
+    <enumerator>
+      <name>line</name>
+    </enumerator>
+    <enumerator>
+      <name>txt</name>
+    </enumerator>
+  </enumerators>
+
+</enumerationModel>

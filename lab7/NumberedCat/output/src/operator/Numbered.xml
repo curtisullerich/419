@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<operatorInstanceModel xmlns="http://www.ibm.com/xmlns/prod/streams/spl/operator/instance" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <context>
+    <kind>spl.relational::Functor</kind>
+    <class>Numbered</class>
+    <operatorModelDirectory>/opt/ibm/InfoSphereStreams/toolkits/spl/spl/relational/Functor</operatorModelDirectory>
+    <applicationDirectory>/home/curtisu/lab7/NumberedCat</applicationDirectory>
+    <outputDirectory>/home/curtisu/lab7/NumberedCat/output</outputDirectory>
+    <optimized>false</optimized>
+    <verbose>false</verbose>
+    <networkByteOrdering>false</networkByteOrdering>
+    <codeBeautification>false</codeBeautification>
+    <includes>
+      <include>"../type/BeJwrMSy2SM7PK0nNKykGAB0_1AS_1.h"</include>
+    </includes>
+    <stateVariables>
+      <stateVariable>
+        <name>state$i</name>
+        <cppType>SPL::int32</cppType>
+        <splType>int32</splType>
+        <value>
+          <cppType>SPL::int32</cppType>
+          <splType>int32</splType>
+          <hasRuntimeConstant>true</hasRuntimeConstant>
+          <cppExpression>lit$1</cppExpression>
+          <splExpression>0</splExpression>
+          <hasFunctions>false</hasFunctions>
+          <hasSideEffects>false</hasSideEffects>
+          <hasStreamAttributes>false</hasStreamAttributes>
+          <sourceLocation>
+            <file>NumberedCat.spl</file>
+            <line>8</line>
+            <column>41</column>
+          </sourceLocation>
+        </value>
+        <sourceLocation>
+          <file>NumberedCat.spl</file>
+          <line>8</line>
+          <column>37</column>
+        </sourceLocation>
+      </stateVariable>
+    </stateVariables>
+    <runtimeConstants>
+      <runtimeConstant>
+        <name>lit$0</name>
+        <cppType>SPL::rstring</cppType>
+        <splType>rstring</splType>
+        <value>" "</value>
+      </runtimeConstant>
+      <runtimeConstant>
+        <name>lit$1</name>
+        <cppType>SPL::int32</cppType>
+        <splType>int32</splType>
+        <value>0</value>
+      </runtimeConstant>
+    </runtimeConstants>
+    <sharedVariables/>
+    <sourceLocation>
+      <file>NumberedCat.spl</file>
+      <line>7</line>
+      <column>5</column>
+    </sourceLocation>
+    <productVersion>2.0.0.4</productVersion>
+  </context>
+
+  <parameters/>
+
+  <inputPorts>
+    <inputPort>
+      <index>0</index>
+      <tupleCppName>iport$0</tupleCppName>
+      <tupleCppType>SPL::BeJwrMSy2SM7PK0nNKykGAB0_1AS_1</tupleCppType>
+      <tupleSPLType>tuple&lt;rstring contents&gt;</tupleSPLType>
+      <facade>false</facade>
+      <mutationAllowed>false</mutationAllowed>
+      <sourceLocation>
+        <file>NumberedCat.spl</file>
+        <line>7</line>
+        <column>49</column>
+      </sourceLocation>
+      <tupleLogic>{
+    state$i++;
+}
+</tupleLogic>
+      <attributes>
+        <attribute>
+          <name>contents</name>
+          <cppType>SPL::rstring</cppType>
+          <splType>rstring</splType>
+        </attribute>
+      </attributes>
+    </inputPort>
+  </inputPorts>
+
+  <outputPorts>
+    <outputPort>
+      <index>0</index>
+      <tupleCppName>oport$0</tupleCppName>
+      <tupleCppType>SPL::BeJwrMSy2SM7PK0nNKykGAB0_1AS_1</tupleCppType>
+      <tupleSPLType>tuple&lt;rstring contents&gt;</tupleSPLType>
+      <facade>false</facade>
+      <mutationAllowed>true</mutationAllowed>
+      <sourceLocation>
+        <file>NumberedCat.spl</file>
+        <line>7</line>
+        <column>5</column>
+      </sourceLocation>
+      <attributes>
+        <attribute>
+          <name>contents</name>
+          <cppType>SPL::rstring</cppType>
+          <splType>rstring</splType>
+          <assignment>
+            <values>
+              <value>
+                <cppType>SPL::rstring</cppType>
+                <splType>rstring</splType>
+                <hasRuntimeConstant>true</hasRuntimeConstant>
+                <cppExpression>((::SPL::spl_cast&lt;SPL::rstring, SPL::int32 &gt;::cast(state$i) + lit$0) + iport$0.get_contents())</cppExpression>
+                <splExpression>(((rstring)(i) + " ") + Lines.contents)</splExpression>
+                <hasFunctions>false</hasFunctions>
+                <hasSideEffects>false</hasSideEffects>
+                <hasStreamAttributes>true</hasStreamAttributes>
+                <sourceLocation>
+                  <file>NumberedCat.spl</file>
+                  <line>10</line>
+                  <column>36</column>
+                </sourceLocation>
+              </value>
+            </values>
+          </assignment>
+        </attribute>
+      </attributes>
+      <finalPunctuationPortScope>
+        <port>0</port>
+      </finalPunctuationPortScope>
+    </outputPort>
+  </outputPorts>
+
+</operatorInstanceModel>

@@ -1,0 +1,22 @@
+composite NumberedCat {
+  graph //this is the name of the stream we're creating
+    // FileSource is an operator
+    // it reads data from a file and outputs it as a stream
+    // each line is a single tuple in the stream named Lines
+    // in this case, the tuples have a single element call "contents" of type rstring
+    stream<rstring contents> Lines = FileSource() { 
+      param format : line;
+      file : getSubmissionTimeValue("file");
+    } 
+    
+    stream<rstring contents> Numbered = Functor(Lines) {
+      // must define i as mutable, or modification isn't allowed
+      logic state : { mutable int32 i = 0; }
+      onTuple Lines : { i++; }
+      output Numbered : contents = (rstring)i + " " + contents;
+    }
+    () as Sink = FileSink(Numbered) {
+      param file : "result.txt";
+      format : line;
+    }
+}

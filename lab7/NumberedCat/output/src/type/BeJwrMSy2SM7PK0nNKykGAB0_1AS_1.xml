@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<tupleModel xmlns="http://www.ibm.com/xmlns/prod/streams/spl/tuple" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <class>BeJwrMSy2SM7PK0nNKykGAB0_1AS_1</class>
+
+  <splType>tuple&lt;rstring contents&gt;</splType>
+
+  <facade>false</facade>
+
+  <headers/>
+
+  <attributes>
+    <attribute>
+      <name>contents</name>
+      <cppType>SPL::rstring</cppType>
+      <splType>rstring</splType>
+    </attribute>
+  </attributes>
+
+</tupleModel>

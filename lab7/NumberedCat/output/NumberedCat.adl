@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<applicationSet xmlns="http://www.ibm.com/xmlns/prod/streams/application" name="NumberedCat.appset" productVersion="2.0.0.4" xmlns:svar="http://www.ibm.com/xmlns/prod/streams/sharedvar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <description>NumberedCat application set</description>
+
+  <application applicationDirectory="../." applicationScope="Default" checkpointDirectory="../data/ckpt" dataDirectory="../data" logLevel="error" name="NumberedCat" outputDirectory="/home/curtisu/lab7/NumberedCat/output" version="1.0.0">
+    <libraries/>
+    <hostpools>
+      <hostpool index="0" membershipMode="shared" name="$default"/>
+    </hostpools>
+    <tupleTypes>
+      <tupleType index="0">
+        <attribute name="contents" type="rstring"/>
+      </tupleType>
+    </tupleTypes>
+    <pes>
+      <pe class="BeJwz9cnMSy2OBwAJewKQ" index="0" language="C++" logLevel="error" optimized="false" relocatable="false" restartable="false">
+        <envVars/>
+        <executable digest="Z2pwtRCINBSXdZ4AZ/a2+zvfRCk=" dynamicLoad="true">
+          <wrapper>none</wrapper>
+          <executableUri>bin/BeJwz9cnMSy2OBwAJewKQ.dpe</executableUri>
+          <arguments></arguments>
+          <dependencies/>
+        </executable>
+        <operInstances>
+          <operInstance class="Lines" definitionIndex="0" index="0" name="Lines" singleThreadedOnInputs="true" singleThreadedOnOutputs="true">
+            <resources>
+              <poolLocation poolIndex="0"/>
+            </resources>
+            <runtimeConstants>
+              <runtimeConstant name="lit$0" submissionTimeValueIndex="0" value="&quot;&quot;"/>
+            </runtimeConstants>
+            <inputPorts/>
+            <outputPorts>
+              <outputPort index="0" isMutable="true" name="Lines" streamName="Lines" tupleTypeIndex="0">
+                <interPeConnection iportIndex="0" operInstanceIndex="1"/>
+              </outputPort>
+            </outputPorts>
+          </operInstance>
+        </operInstances>
+        <inputPorts/>
+        <outputPorts>
+          <outputPort encoding="LE" index="0" singleThreadedOnOutput="true" transport="TCP" tupleTypeIndex="0">
+            <staticConnections>
+              <staticConnection iportIndex="0" peIndex="1"/>
+            </staticConnections>
+            <operInstanceConnection operInstanceIndex="0" oportIndex="0"/>
+          </outputPort>
+        </outputPorts>
+      </pe>
+      <pe class="BeJyz8CvNTUotSk2JBwAT_1gPK" index="1" language="C++" logLevel="error" optimized="false" relocatable="false" restartable="false">
+        <envVars/>
+        <executable digest="bNO1rRXcj5eEjNJPQUgZNjvacQM=" dynamicLoad="true">
+          <wrapper>none</wrapper>
+          <executableUri>bin/BeJyz8CvNTUotSk2JBwAT_1gPK.dpe</executableUri>
+          <arguments></arguments>
+          <dependencies/>
+        </executable>
+        <operInstances>
+          <operInstance class="Numbered" definitionIndex="1" index="1" name="Numbered" singleThreadedOnInputs="true" singleThreadedOnOutputs="true">
+            <resources>
+              <poolLocation poolIndex="0"/>
+            </resources>
+            <runtimeConstants>
+              <runtimeConstant name="lit$0" value="&quot; &quot;"/>
+              <runtimeConstant name="lit$1" value="0"/>
+            </runtimeConstants>
+            <inputPorts>
+              <inputPort index="0" isMutable="false" name="Lines" tupleTypeIndex="0">
+                <interPeConnection operInstanceIndex="0" oportIndex="0"/>
+              </inputPort>
+            </inputPorts>
+            <outputPorts>
+              <outputPort index="0" isMutable="true" name="Numbered" streamName="Numbered" tupleTypeIndex="0">
+                <interPeConnection iportIndex="0" operInstanceIndex="2"/>
+              </outputPort>
+            </outputPorts>
+          </operInstance>
+        </operInstances>
+        <inputPorts>
+          <inputPort encoding="LE" index="0" transport="TCP" tupleTypeIndex="0">
+            <staticConnections>
+              <staticConnection oportIndex="0" peIndex="0"/>
+            </staticConnections>
+            <operInstanceConnection iportIndex="0" operInstanceIndex="1"/>
+          </inputPort>
+        </inputPorts>
+        <outputPorts>
+          <outputPort encoding="LE" index="0" singleThreadedOnOutput="true" transport="TCP" tupleTypeIndex="0">
+            <staticConnections>
+              <staticConnection iportIndex="0" peIndex="2"/>
+            </staticConnections>
+            <operInstanceConnection operInstanceIndex="1" oportIndex="0"/>
+          </outputPort>
+        </outputPorts>
+      </pe>
+      <pe class="BeJwzCc7My44HAAcAAIp" index="2" language="C++" logLevel="error" optimized="false" relocatable="false" restartable="false">
+        <envVars/>
+        <executable digest="NmuRvs6s5xSvq1wCWGog6apk+U8=" dynamicLoad="true">
+          <wrapper>none</wrapper>
+          <executableUri>bin/BeJwzCc7My44HAAcAAIp.dpe</executableUri>
+          <arguments></arguments>
+          <dependencies/>
+        </executable>
+        <operInstances>
+          <operInstance class="Sink" definitionIndex="2" index="2" name="Sink" singleThreadedOnInputs="true" singleThreadedOnOutputs="true">
+            <resources>
+              <poolLocation poolIndex="0"/>
+            </resources>
+            <runtimeConstants>
+              <runtimeConstant name="lit$0" value="&quot;result.txt&quot;"/>
+            </runtimeConstants>
+            <inputPorts>
+              <inputPort index="0" isMutable="false" name="Numbered" tupleTypeIndex="0">
+                <interPeConnection operInstanceIndex="1" oportIndex="0"/>
+              </inputPort>
+            </inputPorts>
+            <outputPorts/>
+          </operInstance>
+        </operInstances>
+        <inputPorts>
+          <inputPort encoding="LE" index="0" transport="TCP" tupleTypeIndex="0">
+            <staticConnections>
+              <staticConnection oportIndex="0" peIndex="1"/>
+            </staticConnections>
+            <operInstanceConnection iportIndex="0" operInstanceIndex="2"/>
+          </inputPort>
+        </inputPorts>
+        <outputPorts/>
+      </pe>
+    </pes>
+    <operDefinitions>
+      <operDefinition index="0" kind="spl.adapter::FileSource">
+        <customMetricIndicies>
+          <customMetricIndex>0</customMetricIndex>
+          <customMetricIndex>1</customMetricIndex>
+        </customMetricIndicies>
+      </operDefinition>
+      <operDefinition index="1" kind="spl.relational::Functor"/>
+      <operDefinition index="2" kind="spl.adapter::FileSink">
+        <customMetricIndicies>
+          <customMetricIndex>2</customMetricIndex>
+        </customMetricIndicies>
+      </operDefinition>
+    </operDefinitions>
+    <composites>
+      <sourceUris>
+        <uri index="0" path="file:///home/curtisu/lab7/NumberedCat/NumberedCat.spl"/>
+      </sourceUris>
+      <compositeOpers>
+        <compositeOper endLine="16" index="0" kind="NumberedCat" numberOfInputPorts="0" numberOfOutputPorts="0" sourceIndex="0" startLine="1" toolkitIndex="0">
+          <description>NumberedCat Composite</description>
+        </compositeOper>
+      </compositeOpers>
+      <compositeOperInstances>
+        <compositeOperInstance compositeOperIndex="0" endLine="16" index="3" name="NumberedCat" sourceIndex="0" startLine="1">
+          <primitiveOperInstance endLine="6" index="0" kind="spl.adapter::FileSource" name="Lines" sourceIndex="0" startLine="3" toolkitIndex="1">
+            <outputPorts>
+              <port index="0">
+                <connections>
+                  <connection operIndex="1" operName="Numbered" portIndex="0" portKind="input"/>
+                </connections>
+              </port>
+            </outputPorts>
+          </primitiveOperInstance>
+          <primitiveOperInstance endLine="11" index="1" kind="spl.relational::Functor" name="Numbered" sourceIndex="0" startLine="7" toolkitIndex="1">
+            <inputPorts>
+              <port index="0">
+                <connections>
+                  <connection operIndex="0" operName="Lines" portIndex="0" portKind="output"/>
+                </connections>
+              </port>
+            </inputPorts>
+            <outputPorts>
+              <port index="0">
+                <connections>
+                  <connection operIndex="2" operName="Sink" portIndex="0" portKind="input"/>
+                </connections>
+              </port>
+            </outputPorts>
+          </primitiveOperInstance>
+          <primitiveOperInstance endLine="15" index="2" kind="spl.adapter::FileSink" name="Sink" sourceIndex="0" startLine="12" toolkitIndex="1">
+            <inputPorts>
+              <port index="0">
+                <connections>
+                  <connection operIndex="1" operName="Numbered" portIndex="0" portKind="output"/>
+                </connections>
+              </port>
+            </inputPorts>
+          </primitiveOperInstance>
+        </compositeOperInstance>
+      </compositeOperInstances>
+    </composites>
+    <toolkits>
+      <toolkit index="0" name="NumberedCat" uri="file:///home/curtisu/lab7/NumberedCat" version="1.0.0"/>
+      <toolkit index="1" name="spl" uri="file:///opt/ibm/InfoSphereStreams/toolkits/spl" version="1.0.1"/>
+    </toolkits>
+    <customMetrics>
+      <customMetric index="0" kind="Counter" name="nFilesOpened">
+        <description>Number of files opened by the FileSource operator</description>
+      </customMetric>
+      <customMetric index="1" kind="Counter" name="nInvalidTuples">
+        <description>Number of tuples that failed to read correctly</description>
+      </customMetric>
+      <customMetric index="2" kind="Counter" name="nFilesOpened">
+        <description>Number of files opened by the FileSink operator</description>
+      </customMetric>
+    </customMetrics>
+    <submissionTimeValues>
+      <submissionTimeValue compositeName="NumberedCat" index="0" kind="named" name="file" required="true"/>
+    </submissionTimeValues>
+  </application>
+
+</applicationSet>

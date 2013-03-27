@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<peModel xmlns="http://www.ibm.com/xmlns/prod/streams/spl/pe" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <context>
+    <class>BeJwz9cnMSy2OBwAJewKQ</class>
+  </context>
+
+  <operators>
+    <operator>
+      <class>Lines</class>
+    </operator>
+  </operators>
+
+</peModel>
