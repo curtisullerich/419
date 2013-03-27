@@ -1,4 +1,4 @@
-composite NumberedCat {
+composite exp1 {
   graph //this is the name of the stream we're creating
     // FileSource is an operator
     // it reads data from a file and outputs it as a stream

@@ -1,0 +1,48 @@
+composite exp1 {
+  graph //this is the name of the stream we're creating
+    // FileSource is an operator
+    // it reads data from a file and outputs it as a stream
+    // each line is a single tuple in the stream named Lines
+    // in this case, the tuples have a single element call "contents" of type rstring
+    stream<rstring contents> LineStream = FileSource() { 
+      param format : line;
+      file : getSubmissionTimeValue("file");
+    } 
+
+    () as Counter = Custom(LineStream) {
+      logic
+        state: {
+          mutable int32 suma = 0;
+          mutable int32 sumh = 0;
+        }
+        onTuple LineStream: {
+          list<rstring> tokens = tokenize(LineStream, " ", false);
+
+          for (rstring str in tokens) {
+            if (str == "history") {
+              sumh++;
+            }
+            if (str == "adventure") {
+              suma++;
+            }
+          }
+        }
+
+        onPunct OneLine: {
+          if (currentPunct() == Sys.FinalMarker) {println(suma + " " + sumh);}
+        }
+    }
+    
+    stream<rstring contents> Numbered = Functor(LineStream) {
+      // must define i as mutable, or modification isn't allowed
+      logic state : { mutable int32 i = 0; }
+      onTuple LineStream : { i++; }
+      output Numbered : contents = (rstring)i + " " + contents;
+    }
+
+    () as Sink = FileSink(Numbered) {
+      param file : "bigresult.txt";
+      format : line;
+    }
+
+}
