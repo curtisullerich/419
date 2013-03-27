@@ -26,7 +26,11 @@ composite exp1 {
         }
 
         onPunct LineStream: {
-          if (currentPunct() == Sys.FinalMarker) {println((rstring) suma + " " + (rstring) sumh);}
+          if (currentPunct() == Sys.FinalMarker) {
+            //println((rstring) suma + " " + (rstring) sumh);
+            output Numbered : contents = (rstring) suma + " " + (rstring) sumh;
+
+          }
         }
     }
     
