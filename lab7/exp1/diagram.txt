@@ -1,0 +1,13 @@
+Experiment 1 logic stream logic graph.
+
+--------------                ----------            ----------------
+|            |  LineStream    |        |  Counter   |              |
+| FileSource |--------------->| Custom |----------->|   FileSink   |
+|            |            \   |        |            | (counts.txt) |
+--------------             \  ----------            ----------------
+                            \
+                             \  -----------             --------------------
+                              \ |         |  Numbered   |                  |
+                               -| Functor |------------>|    FileSink      |
+                                |         |             | (bigresult.txt)  |
+                                -----------             --------------------
