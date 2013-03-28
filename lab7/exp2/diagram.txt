@@ -1,0 +1,7 @@
+Experiment 2 logic stream logic graph.
+
+--------------                ----------            ------------------------
+|            |  LineStream    |        |   Output   |                      |
+| FileSource |--------------->| Custom |----------->|       FileSink       |
+|            |                |        |            | (CustomerStatus.txt) |
+--------------                ----------            ------------------------

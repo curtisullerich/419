@@ -1,0 +1,31 @@
+composite exp2 {
+  graph 
+    stream<rstring account, rstring last, rstring first, int64 balance> LineStream = FileSource() { 
+      param 
+      format : csv;
+      hasHeaderLine : true;
+      defaultTuple : {account = "0", last="default", first="default", balance=0l };
+      file : getSubmissionTimeValue("file");
+    } 
+   
+    stream<rstring name, rstring accountout, rstring status> Output = Custom(LineStream) {
+      logic
+        onTuple LineStream : {
+          if (balance > 10000000l) {
+            submit({name = first + " " + last, accountout = account, status = "Platinum"}, Output);
+          } else if (balance > 5000000l) {
+            submit({name = first + " " + last, accountout = account, status = "Gold"}, Output);
+          } else if (balance > 1000000l) {
+            submit({name = first + " " + last, accountout = account, status = "Silver"}, Output);
+          } else {
+            submit({name = first + " " + last, accountout = account, status = "Bronze"}, Output);
+          }
+        }
+    }
+
+    () as File = FileSink(Output) {
+      param file : "CustomerStatus.txt";
+      format : csv;
+    }
+    
+}

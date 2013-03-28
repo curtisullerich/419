@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<toolkitModel xmlns="http://www.ibm.com/xmlns/prod/streams/spl/toolkit" productVersion="2.0.0.4" xmlns:common="http://www.ibm.com/xmlns/prod/streams/spl/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <toolkit name="exp2" requiredProductVersion="2.0" version="1.0.0">
+    <description>Toolkit Description</description>
+    <uriTable>
+      <uri index="1" value="exp2.spl"/>
+    </uriTable>
+    <namespace name="">
+      <compositeOp column="10" line="1" name="exp2" potentialMain="true" uriIndex="1"/>
+    </namespace>
+  </toolkit>
+
+</toolkitModel>
