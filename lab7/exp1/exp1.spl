@@ -19,10 +19,10 @@ composite exp1 {
           list<rstring> tokens = tokenize(contents, " ", false);
           //count
           for (rstring str in tokens) {
-            if (str == "history") {
+            if (lower(str) == "history") {
               sumh++;
             }
-            if (str == "adventure") {
+            if (lower(str) == "adventure") {
               suma++;
             }
           }
