@@ -1,20 +1,23 @@
 composite exp1 {
   graph 
-    
     stream<rstring contents> LineStream = FileSource() { 
       param format : line;
       file : getSubmissionTimeValue("file");
     } 
 
-    () as Counter = Custom(LineStream) {
+    //create a new stream to accept the tuples and count words
+    stream<rstring contents> Counter = Custom(LineStream) {
       logic
         state: {
+          //count of "adventure"
           mutable int32 suma = 0;
+          //count of "history"
           mutable int32 sumh = 0;
         }
         onTuple LineStream: {
+          //get a list of tokens
           list<rstring> tokens = tokenize(contents, " ", false);
-
+          //count
           for (rstring str in tokens) {
             if (str == "history") {
               sumh++;
@@ -24,26 +27,27 @@ composite exp1 {
             }
           }
         }
-
+        //watch for EOF
         onPunct LineStream: {
           if (currentPunct() == Sys.FinalMarker) {
-            //println((rstring) suma + " " + (rstring) sumh);
-            output Numbered : contents = (rstring) suma + " " + (rstring) sumh;
-
+            //params must of same type: first a type, then a port of the same tuple
+            submit({contents="adventure was found " + (rstring) suma + " times and history was found " + (rstring) sumh + " times."}, Counter);
           }
         }
     }
+    () as CountSink = FileSink(Counter) {
+      param file : "count.txt";
+      format : line;
+    }
     
     stream<rstring contents> Numbered = Functor(LineStream) {
-      // must define i as mutable, or modification isn't allowed
       logic state : { mutable int32 i = 0; }
       onTuple LineStream : { i++; }
       output Numbered : contents = (rstring)i + " " + contents;
     }
 
-    () as Sink = FileSink(Numbered) {
+    () as BigSink = FileSink(Numbered) {
       param file : "bigresult.txt";
       format : line;
     }
-
 }

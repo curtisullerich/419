@@ -5,8 +5,8 @@
     <kind>spl.relational::Functor</kind>
     <class>Numbered</class>
     <operatorModelDirectory>/opt/ibm/InfoSphereStreams/toolkits/spl/spl/relational/Functor</operatorModelDirectory>
-    <applicationDirectory>/home/curtisu/lab7/NumberedCat</applicationDirectory>
-    <outputDirectory>/home/curtisu/lab7/NumberedCat/output</outputDirectory>
+    <applicationDirectory>/home/curtisu/419/lab7/exp1</applicationDirectory>
+    <outputDirectory>/home/curtisu/419/lab7/exp1/output</outputDirectory>
     <optimized>false</optimized>
     <verbose>false</verbose>
     <networkByteOrdering>false</networkByteOrdering>
@@ -29,14 +29,14 @@
           <hasSideEffects>false</hasSideEffects>
           <hasStreamAttributes>false</hasStreamAttributes>
           <sourceLocation>
-            <file>NumberedCat.spl</file>
-            <line>8</line>
+            <file>exp1.spl</file>
+            <line>44</line>
             <column>41</column>
           </sourceLocation>
         </value>
         <sourceLocation>
-          <file>NumberedCat.spl</file>
-          <line>8</line>
+          <file>exp1.spl</file>
+          <line>44</line>
           <column>37</column>
         </sourceLocation>
       </stateVariable>
@@ -57,8 +57,8 @@
     </runtimeConstants>
     <sharedVariables/>
     <sourceLocation>
-      <file>NumberedCat.spl</file>
-      <line>7</line>
+      <file>exp1.spl</file>
+      <line>43</line>
       <column>5</column>
     </sourceLocation>
     <productVersion>2.0.0.4</productVersion>
@@ -75,8 +75,8 @@
       <facade>false</facade>
       <mutationAllowed>false</mutationAllowed>
       <sourceLocation>
-        <file>NumberedCat.spl</file>
-        <line>7</line>
+        <file>exp1.spl</file>
+        <line>43</line>
         <column>49</column>
       </sourceLocation>
       <tupleLogic>{
@@ -102,8 +102,8 @@
       <facade>false</facade>
       <mutationAllowed>true</mutationAllowed>
       <sourceLocation>
-        <file>NumberedCat.spl</file>
-        <line>7</line>
+        <file>exp1.spl</file>
+        <line>43</line>
         <column>5</column>
       </sourceLocation>
       <attributes>
@@ -118,13 +118,13 @@
                 <splType>rstring</splType>
                 <hasRuntimeConstant>true</hasRuntimeConstant>
                 <cppExpression>((::SPL::spl_cast&lt;SPL::rstring, SPL::int32 &gt;::cast(state$i) + lit$0) + iport$0.get_contents())</cppExpression>
-                <splExpression>(((rstring)(i) + " ") + Lines.contents)</splExpression>
+                <splExpression>(((rstring)(i) + " ") + LineStream.contents)</splExpression>
                 <hasFunctions>false</hasFunctions>
                 <hasSideEffects>false</hasSideEffects>
                 <hasStreamAttributes>true</hasStreamAttributes>
                 <sourceLocation>
-                  <file>NumberedCat.spl</file>
-                  <line>10</line>
+                  <file>exp1.spl</file>
+                  <line>46</line>
                   <column>36</column>
                 </sourceLocation>
               </value>

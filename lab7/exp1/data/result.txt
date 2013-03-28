@@ -1,4 +1,0 @@
-1 The Unix utility "cat" is so called
-2 because it can con"cat"enate files.
-3 Our program behaves like "cat -n",
-4 listing one file and numbering lines.

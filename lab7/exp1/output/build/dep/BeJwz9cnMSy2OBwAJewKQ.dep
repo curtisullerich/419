@@ -1,1 +1,0 @@
-	@$(CXX) $(SPL_CXXFLAGS) -o bin/BeJwz9cnMSy2OBwAJewKQ.dpe -fPIC -shared $(PEBeJwz9cnMSy2OBwAJewKQ) -L /opt/ibm/InfoSphereStreams/toolkits/spl/impl/lib -Wl,-rpath -Wl,/opt/ibm/InfoSphereStreams/toolkits/spl/impl/lib -lstreams-stdtk-runtime $(SPL_LDFLAGS)

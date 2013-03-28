@@ -15,18 +15,16 @@ SPL_CXXFLAGS += -D_REENTRANT -fPIC -finline-functions -fmessage-length=0
 SPL_CXXFLAGS += $(PE_INCLUDE) 
 SPL_LDFLAGS = $(PE_LIB)
 
-SPL_TYPES = build/type/BeJyrNI03TsrMM03KyU_1ONk4uLjPJycxLNS6pKAEAfjkJCo.o \
+SPL_TYPES = build/type/BeJyrNIo3NArPzEvJL_1dNLMpOLTI0dMvMS8yBcACkegr2.o \
+            build/type/BeJyrNI03TsrMM03KyU_1ONk4uLjPJycxLNS6pKAEAfjkJCo.o \
             build/type/BeJwrMSy2SM7PK0nNKykGAB0_1AS_1.o 
 SPL_FUNCTIONS = 
-SPL_OPERATORS = build/operator/Lines.o \
-                build/operator/Numbered.o \
-                build/operator/Sink.o 
-SPL_PE_OBJS = build/pe/BeJwz9cnMSy2OBwAJewKQ.o \
-              build/pe/BeJyz8CvNTUotSk2JBwAT_1gPK.o \
-              build/pe/BeJwzCc7My44HAAcAAIp.o 
-SPL_PE_BINS = bin/BeJwz9cnMSy2OBwAJewKQ.dpe \
-              bin/BeJyz8CvNTUotSk2JBwAT_1gPK.dpe \
-              bin/BeJwzCc7My44HAAcAAIp.dpe 
+SPL_OPERATORS = build/operator/LineStream.o \
+                build/operator/Counter.o \
+                build/operator/CountSink.o \
+                build/operator/Numbered.o 
+SPL_PE_OBJS = build/pe/BeJyzdM4vzSsJzszLjjcHM1OL4g0NfDLzUoNLilITc_0Mt_1Epzk1KLUlPiAWAqBAq.o 
+SPL_PE_BINS = bin/BeJyzdM4vzSsJzszLjjcHM1OL4g0NfDLzUoNLilITc_0Mt_1Epzk1KLUlPiAWAqBAq.dpe 
 
 .PHONY: distclean clean all types functions operators pes svar
 
@@ -39,6 +37,14 @@ bin:
 	@mkdir -m 775 bin
 
 types: $(SPL_TYPES)
+
+build/type/BeJyrNIo3NArPzEvJL_1dNLMpOLTI0dMvMS8yBcACkegr2.o: \
+	    src/type/BeJyrNIo3NArPzEvJL_1dNLMpOLTI0dMvMS8yBcACkegr2.h \
+	    src/type/BeJyrNIo3NArPzEvJL_1dNLMpOLTI0dMvMS8yBcACkegr2.cpp \
+	    build/cppOptions \
+	    | build/type
+	@echo " [CXX-type] enum{WindowMarker,FinalMarker}"
+	@$(CXX) -o $@ -c $(SPL_CXXFLAGS) src/type/BeJyrNIo3NArPzEvJL_1dNLMpOLTI0dMvMS8yBcACkegr2.cpp
 
 build/type/BeJyrNI03TsrMM03KyU_1ONk4uLjPJycxLNS6pKAEAfjkJCo.o: \
 	    src/type/BeJyrNI03TsrMM03KyU_1ONk4uLjPJycxLNS6pKAEAfjkJCo.h \
@@ -61,17 +67,38 @@ build/type:
 
 operators: $(SPL_OPERATORS)
 
--include build/operator/Lines.d
-build/operator/Lines.o: \
-	    src/operator/Lines.h \
-	    src/operator/Lines.cpp\
-	    build/dep/operator/Lines.dep \
-	    src/type/BeJyrNI03TsrMM03KyU_1ONk4uLjPJycxLNS6pKAEAfjkJCo.h \
-	    src/type/BeJwrMSy2SM7PK0nNKykGAB0_1AS_1.h  \
+-include build/operator/LineStream.d
+build/operator/LineStream.o: \
+	    src/operator/LineStream.h \
+	    src/operator/LineStream.cpp\
+	    build/dep/operator/LineStream.dep \
+	    src/type/BeJyrNI03TsrMM03KyU_1ONk4uLjPJycxLNS6pKAEAfjkJCo.h  \
 	    build/cppOptions \
 	    | build/operator
-	@echo " [CXX-operator] Lines"
-	@$(CXX) -o $@ -MD -I /opt/ibm/InfoSphereStreams/toolkits/spl/impl/include -c $(SPL_CXXFLAGS) src/operator/Lines.cpp
+	@echo " [CXX-operator] LineStream"
+	@$(CXX) -o $@ -MD -I /opt/ibm/InfoSphereStreams/toolkits/spl/impl/include -c $(SPL_CXXFLAGS) src/operator/LineStream.cpp
+
+-include build/operator/Counter.d
+build/operator/Counter.o: \
+	    src/operator/Counter.h \
+	    src/operator/Counter.cpp\
+	    build/dep/operator/Counter.dep \
+	    src/type/BeJyrNIo3NArPzEvJL_1dNLMpOLTI0dMvMS8yBcACkegr2.h  \
+	    build/cppOptions \
+	    | build/operator
+	@echo " [CXX-operator] Counter"
+	@$(CXX) -o $@ -MD -c $(SPL_CXXFLAGS) src/operator/Counter.cpp
+
+-include build/operator/CountSink.d
+build/operator/CountSink.o: \
+	    src/operator/CountSink.h \
+	    src/operator/CountSink.cpp\
+	    build/dep/operator/CountSink.dep \
+	    src/type/BeJyrNI03TsrMM03KyU_1ONk4uLjPJycxLNS6pKAEAfjkJCo.h  \
+	    build/cppOptions \
+	    | build/operator
+	@echo " [CXX-operator] CountSink"
+	@$(CXX) -o $@ -MD -I /opt/ibm/InfoSphereStreams/toolkits/spl/impl/include -c $(SPL_CXXFLAGS) src/operator/CountSink.cpp
 
 -include build/operator/Numbered.d
 build/operator/Numbered.o: \
@@ -83,18 +110,6 @@ build/operator/Numbered.o: \
 	@echo " [CXX-operator] Numbered"
 	@$(CXX) -o $@ -MD -c $(SPL_CXXFLAGS) src/operator/Numbered.cpp
 
--include build/operator/Sink.d
-build/operator/Sink.o: \
-	    src/operator/Sink.h \
-	    src/operator/Sink.cpp\
-	    build/dep/operator/Sink.dep \
-	    src/type/BeJyrNI03TsrMM03KyU_1ONk4uLjPJycxLNS6pKAEAfjkJCo.h \
-	    src/type/BeJwrMSy2SM7PK0nNKykGAB0_1AS_1.h  \
-	    build/cppOptions \
-	    | build/operator
-	@echo " [CXX-operator] Sink"
-	@$(CXX) -o $@ -MD -I /opt/ibm/InfoSphereStreams/toolkits/spl/impl/include -c $(SPL_CXXFLAGS) src/operator/Sink.cpp
-
 build/operator:
 	-@mkdir -m 775 -p build/operator
 
@@ -102,71 +117,49 @@ functions: $(SPL_FUNCTIONS)
 
 pes: $(SPL_PE_BINS)
 
-build/pe/BeJwz9cnMSy2OBwAJewKQ.o: \
-	    src/pe/BeJwz9cnMSy2OBwAJewKQ.h \
-	    src/pe/BeJwz9cnMSy2OBwAJewKQ.cpp  \
+build/pe/BeJyzdM4vzSsJzszLjjcHM1OL4g0NfDLzUoNLilITc_0Mt_1Epzk1KLUlPiAWAqBAq.o: \
+	    src/pe/BeJyzdM4vzSsJzszLjjcHM1OL4g0NfDLzUoNLilITc_0Mt_1Epzk1KLUlPiAWAqBAq.h \
+	    src/pe/BeJyzdM4vzSsJzszLjjcHM1OL4g0NfDLzUoNLilITc_0Mt_1Epzk1KLUlPiAWAqBAq.cpp  \
 	    build/cppOptions \
 	    | build/pe
 	@echo " [CXX-pe] pe0"
-	@$(CXX) -o $@ -c $(SPL_CXXFLAGS) src/pe/BeJwz9cnMSy2OBwAJewKQ.cpp
+	@$(CXX) -o $@ -c $(SPL_CXXFLAGS) src/pe/BeJyzdM4vzSsJzszLjjcHM1OL4g0NfDLzUoNLilITc_0Mt_1Epzk1KLUlPiAWAqBAq.cpp
 
-PEBeJwz9cnMSy2OBwAJewKQ = \
-	    build/pe/BeJwz9cnMSy2OBwAJewKQ.o \
-	    build/operator/Lines.o \
+PEBeJyzdM4vzSsJzszLjjcHM1OL4g0NfDLzUoNLilITc_0Mt_1Epzk1KLUlPiAWAqBAq = \
+	    build/pe/BeJyzdM4vzSsJzszLjjcHM1OL4g0NfDLzUoNLilITc_0Mt_1Epzk1KLUlPiAWAqBAq.o \
+	    build/operator/LineStream.o \
+	    build/type/BeJwrMSy2SM7PK0nNKykGAB0_1AS_1.o \
 	    build/type/BeJyrNI03TsrMM03KyU_1ONk4uLjPJycxLNS6pKAEAfjkJCo.o \
-	    build/type/BeJwrMSy2SM7PK0nNKykGAB0_1AS_1.o 
+	    build/operator/Counter.o \
+	    build/type/BeJyrNIo3NArPzEvJL_1dNLMpOLTI0dMvMS8yBcACkegr2.o \
+	    build/operator/CountSink.o \
+	    build/operator/Numbered.o 
 
-bin/BeJwz9cnMSy2OBwAJewKQ.dpe: \
-	$(PEBeJwz9cnMSy2OBwAJewKQ) \
-	build/dep/BeJwz9cnMSy2OBwAJewKQ.dep \
+bin/BeJyzdM4vzSsJzszLjjcHM1OL4g0NfDLzUoNLilITc_0Mt_1Epzk1KLUlPiAWAqBAq.dpe: \
+	$(PEBeJyzdM4vzSsJzszLjjcHM1OL4g0NfDLzUoNLilITc_0Mt_1Epzk1KLUlPiAWAqBAq) \
+	build/dep/BeJyzdM4vzSsJzszLjjcHM1OL4g0NfDLzUoNLilITc_0Mt_1Epzk1KLUlPiAWAqBAq.dep \
 	build/ldOptions
 	@echo " [LD-pe] pe0"
-	@$(CXX) $(SPL_CXXFLAGS) -o bin/BeJwz9cnMSy2OBwAJewKQ.dpe -fPIC -shared $(PEBeJwz9cnMSy2OBwAJewKQ) -L /opt/ibm/InfoSphereStreams/toolkits/spl/impl/lib -Wl,-rpath -Wl,/opt/ibm/InfoSphereStreams/toolkits/spl/impl/lib -lstreams-stdtk-runtime $(SPL_LDFLAGS)
-
-build/pe/BeJyz8CvNTUotSk2JBwAT_1gPK.o: \
-	    src/pe/BeJyz8CvNTUotSk2JBwAT_1gPK.h \
-	    src/pe/BeJyz8CvNTUotSk2JBwAT_1gPK.cpp  \
-	    build/cppOptions \
-	    | build/pe
-	@echo " [CXX-pe] pe1"
-	@$(CXX) -o $@ -c $(SPL_CXXFLAGS) src/pe/BeJyz8CvNTUotSk2JBwAT_1gPK.cpp
-
-PEBeJyz8CvNTUotSk2JBwAT_1gPK = \
-	    build/pe/BeJyz8CvNTUotSk2JBwAT_1gPK.o \
-	    build/operator/Numbered.o \
-	    build/type/BeJwrMSy2SM7PK0nNKykGAB0_1AS_1.o 
-
-bin/BeJyz8CvNTUotSk2JBwAT_1gPK.dpe: \
-	$(PEBeJyz8CvNTUotSk2JBwAT_1gPK) \
-	build/dep/BeJyz8CvNTUotSk2JBwAT_1gPK.dep \
-	build/ldOptions
-	@echo " [LD-pe] pe1"
-	@$(CXX) $(SPL_CXXFLAGS) -o bin/BeJyz8CvNTUotSk2JBwAT_1gPK.dpe -fPIC -shared $(PEBeJyz8CvNTUotSk2JBwAT_1gPK) $(SPL_LDFLAGS)
-
-build/pe/BeJwzCc7My44HAAcAAIp.o: \
-	    src/pe/BeJwzCc7My44HAAcAAIp.h \
-	    src/pe/BeJwzCc7My44HAAcAAIp.cpp  \
-	    build/cppOptions \
-	    | build/pe
-	@echo " [CXX-pe] pe2"
-	@$(CXX) -o $@ -c $(SPL_CXXFLAGS) src/pe/BeJwzCc7My44HAAcAAIp.cpp
-
-PEBeJwzCc7My44HAAcAAIp = \
-	    build/pe/BeJwzCc7My44HAAcAAIp.o \
-	    build/operator/Sink.o \
-	    build/type/BeJyrNI03TsrMM03KyU_1ONk4uLjPJycxLNS6pKAEAfjkJCo.o \
-	    build/type/BeJwrMSy2SM7PK0nNKykGAB0_1AS_1.o 
-
-bin/BeJwzCc7My44HAAcAAIp.dpe: \
-	$(PEBeJwzCc7My44HAAcAAIp) \
-	build/dep/BeJwzCc7My44HAAcAAIp.dep \
-	build/ldOptions
-	@echo " [LD-pe] pe2"
-	@$(CXX) $(SPL_CXXFLAGS) -o bin/BeJwzCc7My44HAAcAAIp.dpe -fPIC -shared $(PEBeJwzCc7My44HAAcAAIp) -L /opt/ibm/InfoSphereStreams/toolkits/spl/impl/lib -Wl,-rpath -Wl,/opt/ibm/InfoSphereStreams/toolkits/spl/impl/lib -lstreams-stdtk-runtime $(SPL_LDFLAGS)
+	@$(CXX) $(SPL_CXXFLAGS) -o bin/BeJyzdM4vzSsJzszLjjcHM1OL4g0NfDLzUoNLilITc_0Mt_1Epzk1KLUlPiAWAqBAq.dpe -fPIC -shared $(PEBeJyzdM4vzSsJzszLjjcHM1OL4g0NfDLzUoNLilITc_0Mt_1Epzk1KLUlPiAWAqBAq) -L /opt/ibm/InfoSphereStreams/toolkits/spl/impl/lib -Wl,-rpath -Wl,/opt/ibm/InfoSphereStreams/toolkits/spl/impl/lib -lstreams-stdtk-runtime -lstreams-stdtk-runtime $(SPL_LDFLAGS)
 
 build/pe:
 	-@mkdir -m 775 build/pe
 
-standalone: 
-	@rm -f bin/standalone
+standalone: bin/standalone 
+
+build/standalone/standalone.o: \
+	    src/standalone/standalone.h \
+	    src/standalone/standalone.cpp  \
+	    build/cppOptions \
+	    | build/standalone
+	@echo " [CXX-standalone] standalone"
+	@$(CXX) -o $@ -c $(SPL_CXXFLAGS) src/standalone/standalone.cpp
+
+bin/standalone: build/standalone/standalone.o build/ldOptions
+	@echo " [LD-standalone] standalone"
+	@$(CXX) $(SPL_CXXFLAGS) -o bin/standalone build/standalone/standalone.o $(PE_STAND_LIB)
+	@echo " [LN-standalone] standalone "
+	@ln -sf standalone bin/exp1
+build/standalone:
+	-@mkdir -m 775 build/standalone
 
