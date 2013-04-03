@@ -1,4 +1,4 @@
-Experiment 2 logic stream logic graph.
+Experiment 2 dataflow graph.
 
 --------------                ----------            ------------------------
 |            |  LineStream    |        |   Output   |                      |
