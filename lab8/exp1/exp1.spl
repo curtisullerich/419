@@ -3,17 +3,17 @@ composite exp1 {
   graph 
     stream<rstring timestamp, rstring callerid, rstring calleeid, int64 duration> LineStream = FileSource() { 
       param 
-      format : csv;
-      hasHeaderLine : false;
-      defaultTuple : {timestamp = "0", callerid="default", calleeid="default", duration=0l };
-      file : getSubmissionTimeValue("file1");
+        format : csv;
+        hasHeaderLine : false;
+        defaultTuple : {timestamp = "0", callerid="default", calleeid="default", duration=0l };
+        file : getSubmissionTimeValue("file1");
     } 
     stream<rstring timestamp, rstring callerid, rstring calleeid, int64 duration> LineStream = FileSource() { 
       param 
-      format : csv;
-      hasHeaderLine : false;
-      defaultTuple : {timestamp = "0", callerid="default", calleeid="default", duration=0l };
-      file : getSubmissionTimeValue("file2");
+        format : csv;
+        hasHeaderLine : false;
+        defaultTuple : {timestamp = "0", callerid="default", calleeid="default", duration=0l };
+        file : getSubmissionTimeValue("file2");
     } 
    
     stream<rstring id, rstring type> Output = Custom(LineStream) {
