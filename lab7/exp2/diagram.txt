@@ -1,7 +1,0 @@
-Experiment 2 dataflow graph.
-
---------------                ----------            ------------------------
-|            |  LineStream    |        |   Output   |                      |
-| FileSource |--------------->| Custom |----------->|       FileSink       |
-|            |                |        |            | (CustomerStatus.txt) |
---------------                ----------            ------------------------
