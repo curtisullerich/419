@@ -58,7 +58,7 @@ composite exp1 {
             ab[callerid] = {calleeid:1l};
           }
           //submit({id=callerid,letype=(rstring) second+"call"},Output);
-          if (second <= 10f) {
+          if (dur <= 10f) {
             
             if (hour in c) {
               if (callerid in c[hour]) {
@@ -99,7 +99,8 @@ composite exp1 {
 
             for (int64 hour in c) {
               for (rstring caller in c[hour]) {
-                submit({id=caller,letype=(rstring)c[hour][caller]}, Output);
+                //if (c[hour][caller] > 1l){
+                //submit({id=caller,letype=(rstring)c[hour][caller]}, Output);
                 if (c[hour][caller] >= 10l) {
                   if (caller in results) {
                     insertM(results[caller], "C");
