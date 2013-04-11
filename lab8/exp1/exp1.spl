@@ -1,22 +1,25 @@
 
 composite exp1 {
   graph 
-    stream<rstring timestamp, rstring callerid, rstring calleeid, int64 duration> LineStream = FileSource() { 
+    stream<rstring time, rstring callerid, rstring calleeid, rstring duration> LineStream = FileSource() { 
       param 
         format : csv;
         hasHeaderLine : false;
-        defaultTuple : {timestamp = "0", callerid="default", calleeid="default", duration=0l };
+        defaultTuple : {time = "0", callerid="default", calleeid="default", duration="0" };
         file : getSubmissionTimeValue("file1");
-    } 
-    stream<rstring timestamp, rstring callerid, rstring calleeid, int64 duration> LineStream = FileSource() { 
+    }
+ 
+    stream<rstring time, rstring callerid, rstring calleeid, rstring duration> LineStream2 = FileSource() { 
       param 
         format : csv;
         hasHeaderLine : false;
-        defaultTuple : {timestamp = "0", callerid="default", calleeid="default", duration=0l };
+        defaultTuple : {time = "0", callerid="default", calleeid="default", duration="0" };
         file : getSubmissionTimeValue("file2");
     } 
+
+    stream<rstring time, rstring callerid, rstring calleeid, rstring duration> Uniond = Union(LineStream;LineStream2){}
    
-    stream<rstring id, rstring type> Output = Custom(LineStream) {
+    stream<rstring id, rstring letype> Output = Custom(Uniond) {
       logic
         state: {
           //type callerToCalleeWithCountMap = map<rstring, map<rstring, int64>>;
@@ -26,14 +29,52 @@ composite exp1 {
           //callertoCalleeWithCountMap abcounter;
           //hourToCallerWithCountMap ccounter;
 
-          mutable map<rstring, map<rstring, int64>> callerToCalleeWithCountmap = {};
-          mutable map<rstring, map<rstring, int64>> hourToCallerWithCountMap = {};
+          //caller id, <callee id, count>
+          mutable map<rstring, map<rstring, int64>> ab = {};
+
+          //hour, caller id, count>
+          mutable map<int64, map<rstring, int64>> c = {};
+          
+        }
+        onTuple Uniond : {
+          mutable int64 hour = -1;
+          mutable int64 minute = -1;
+          mutable float64 second = -1;
+          mutable float64 dur = -1;
+
+          list<rstring> components = tokenize(time, ":", false);
+          parseNumber(hour,components[0]);
+          parseNumber(minute,components[1]);
+          parseNumber(second,components[2]);
+          parseNumber(dur,duration);
+
+          if (callerid in ab) {
+            if (calleeid in ab[callerid]) {
+              ab[callerid][calleeid] = ab[callerid][calleeid] + 1l;
+            } else {
+              ab[callerid][calleeid] = 1l;
+            }
+          } else {
+            ab[callerid] = {calleeid:1l};
+          }
+          if (second <= 10f) {
+            
+            if (hour in c) {
+              if (callerid in c[hour]) {
+                c[hour][callerid] = c[hour][callerid] + 1l; 
+              } else {
+                c[hour][callerid] = 1l;
+              }
+            } else {
+              c[hour] = {calleeid:1l};
+            }
+          }
+//          submit({id=callerid, letype=calleeid}, Output);
+          
 
         }
-        onTuple LineStream : {
-          
-          submit({id}, Output);
-        }
+
+        onFinalPunct
     }
 
     () as File = FileSink(Output) {
