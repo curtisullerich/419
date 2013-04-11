@@ -1,0 +1,15 @@
+Experiment 1 dataflow graph.
+
+-----------------
+|               | Linestream1
+|  FileSource   |--.
+| (recordX.csv) |   \
+-----------------    \    ---------         ----------         ------------------
+                      \   |       | Uniond  |        |  Output |                |
+                       >--| Union |---------| Custom |---------|    FileSink    |
+                      /   |       |         |        |         | (suspects.txt) |
+-----------------    /    ---------         ----------         ------------------
+|               |   /
+|  FileSource   |--'
+| (recordY.csv) |  Linestream2
+-----------------
