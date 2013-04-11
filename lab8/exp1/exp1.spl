@@ -72,9 +72,59 @@ composite exp1 {
 //          submit({id=callerid, letype=calleeid}, Output);
           
 
+          if (currentPunct() == Sys.FinalMarker) {
+            mutable map<rstring callerid, set<rstring> types> results = {};
+            for (rstring k in ab) {
+              if(ab[k].size() >= 30) {
+                if (k in results) {
+                  insertM(results[k], "B");
+                } else {
+                  results[k] = {"B"};
+                }
+              }
+
+              mutable int32 sum = 0;
+              for (rstring callee in ab[k]) {
+                sum += ab[k][callee];
+              }
+              if(sum >= 35) {
+                if (k in results) {
+                  insertM(results[k], "A");
+                } else {
+                  results[k] = {"A"};
+                }
+              }
+            }            
+
+            for (int64 hour in c) {
+              for (rstring caller in c[hour]) {
+                if (c[hour][caller].size() >= 10) {
+                  if (caller in results) {
+                    insertM(results[caller], "C");
+                  } else {
+                    results[k] = {"C"};
+                  }
+                }
+              }
+            }
+
+            for (rstring caller in results) {
+              mutable rstring line = "";
+
+              if ("A" in results[caller]) {
+                line += " A"
+              }
+              if ("B" in results[caller]) {
+                line += " B"
+              }
+              if ("C" in results[caller]) {
+                line += " C"
+              }
+              submit({id=caller, id=line}, Output);
+            }
+          }
         }
 
-        onFinalPunct
     }
 
     () as File = FileSink(Output) {
