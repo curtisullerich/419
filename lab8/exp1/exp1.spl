@@ -1,6 +1,6 @@
-
 composite exp1 {
   graph 
+    //read in both files as CSVs
     stream<rstring time, rstring callerid, rstring calleeid, rstring duration> LineStream = FileSource() { 
       param 
         format : csv;
@@ -17,26 +17,25 @@ composite exp1 {
         file : getSubmissionTimeValue("file2");
     } 
 
+    //union the two files
     stream<rstring time, rstring callerid, rstring calleeid, rstring duration> Uniond = Union(LineStream;LineStream2){}
    
+    //Custom operator to detect types of suspects
     stream<rstring id, rstring letype> Output = Custom(Uniond) {
       logic
         state: {
-          //type callerToCalleeWithCountMap = map<rstring, map<rstring, int64>>;
-          //type hourToCallerWithCountMap = map<rstring, map<rstring, int64>>;
-          //map<caller id, map<callee id, int count>>
-          //map<hour, map<caller id, int count>>//of less than 10 
-          //callertoCalleeWithCountMap abcounter;
-          //hourToCallerWithCountMap ccounter;
-
+          //map to store information about suspects of type a and b
           //caller id, <callee id, count>
           mutable map<rstring, map<rstring, int64>> ab = {};
 
+          //map to store information about suspects of type c
           //hour, caller id, count>
           mutable map<int64, map<rstring, int64>> c = {};
-          
         }
+
         onTuple Uniond : {
+
+          //parse the time into its components
           mutable int64 hour = -1;
           mutable int64 minute = -1;
           mutable float64 second = -1;
@@ -48,6 +47,8 @@ composite exp1 {
           parseNumber(second,components[2]);
           parseNumber(dur,duration);
 
+
+          //update the ab map
           if (callerid in ab) {
             if (calleeid in ab[callerid]) {
               ab[callerid][calleeid] = ab[callerid][calleeid] + 1l;
@@ -57,9 +58,9 @@ composite exp1 {
           } else {
             ab[callerid] = {calleeid:1l};
           }
-          //submit({id=callerid,letype=(rstring) second+"call"},Output);
+
+          //if this is a short call, stick it in the map
           if (dur <= 10f) {
-            
             if (hour in c) {
               if (callerid in c[hour]) {
                 c[hour][callerid] = c[hour][callerid] + 1l; 
@@ -70,11 +71,13 @@ composite exp1 {
               c[hour] = {callerid:1l};
             }
           }
-//          submit({id=callerid, letype=calleeid}, Output);
         }          
+
+
         onPunct Uniond: {
           if (currentPunct() == Sys.FinalMarker) {
             mutable map<rstring, set<rstring>> results = {};
+            //recover all the actual results from the maps
             for (rstring k in ab) {
               if(size(ab[k]) >= 30) {
                 if (k in results) {
@@ -113,24 +116,30 @@ composite exp1 {
 
             for (rstring caller in results) {
               mutable rstring line = "";
-
+              mutable boolean started = false;
               if ("A" in results[caller]) {
-                line += " A";
+                line += "A";
+                started = true;
               }
               if ("B" in results[caller]) {
-                line += " B";
+                if (started) {
+                  line += " ";
+                }
+                line += "B";
               }
               if ("C" in results[caller]) {
-                line += " C";
+                if (started) {
+                  line += " ";
+                }
+                line += "C";
               }
               submit({id=caller, letype=line}, Output);
             }
           }
-          
         }
-
     }
 
+    //dump output
     () as File = FileSink(Output) {
       param file : "suspects.txt";
       format : csv;
