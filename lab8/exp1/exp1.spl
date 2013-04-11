@@ -19,12 +19,15 @@ composite exp1 {
     stream<rstring id, rstring type> Output = Custom(LineStream) {
       logic
         state: {
-          type callerToCalleeWithCountMap = map<rstring, map<rstring, int64>>;
-          type hourToCallerWithCountMap = map<rstring, map<rstring, int64>>;
+          //type callerToCalleeWithCountMap = map<rstring, map<rstring, int64>>;
+          //type hourToCallerWithCountMap = map<rstring, map<rstring, int64>>;
           //map<caller id, map<callee id, int count>>
           //map<hour, map<caller id, int count>>//of less than 10 
-          callertoCalleeWithCountMap abcounter;
-          hourToCallerWithCountMap ccounter;
+          //callertoCalleeWithCountMap abcounter;
+          //hourToCallerWithCountMap ccounter;
+
+          mutable map<rstring, map<rstring, int64>> callerToCalleeWithCountmap = {};
+          mutable map<rstring, map<rstring, int64>> hourToCallerWithCountMap = {};
 
         }
         onTuple LineStream : {
