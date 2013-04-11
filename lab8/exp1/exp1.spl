@@ -57,6 +57,7 @@ composite exp1 {
           } else {
             ab[callerid] = {calleeid:1l};
           }
+          //submit({id=callerid,letype=(rstring) second+"call"},Output);
           if (second <= 10f) {
             
             if (hour in c) {
@@ -66,16 +67,16 @@ composite exp1 {
                 c[hour][callerid] = 1l;
               }
             } else {
-              c[hour] = {calleeid:1l};
+              c[hour] = {callerid:1l};
             }
           }
 //          submit({id=callerid, letype=calleeid}, Output);
-          
-
+        }          
+        onPunct Uniond: {
           if (currentPunct() == Sys.FinalMarker) {
-            mutable map<rstring callerid, set<rstring>> results = {};
+            mutable map<rstring, set<rstring>> results = {};
             for (rstring k in ab) {
-              if(ab[k].size() >= 30) {
+              if(size(ab[k]) >= 30) {
                 if (k in results) {
                   insertM(results[k], "B");
                 } else {
@@ -83,11 +84,11 @@ composite exp1 {
                 }
               }
 
-              mutable int32 sum = 0;
+              mutable int64 sum = 0;
               for (rstring callee in ab[k]) {
                 sum += ab[k][callee];
               }
-              if(sum >= 35) {
+              if(sum >= 35l) {
                 if (k in results) {
                   insertM(results[k], "A");
                 } else {
@@ -98,11 +99,12 @@ composite exp1 {
 
             for (int64 hour in c) {
               for (rstring caller in c[hour]) {
-                if (c[hour][caller].size() >= 10) {
+                submit({id=caller,letype=(rstring)c[hour][caller]}, Output);
+                if (c[hour][caller] >= 10l) {
                   if (caller in results) {
                     insertM(results[caller], "C");
                   } else {
-                    results[k] = {"C"};
+                    results[caller] = {"C"};
                   }
                 }
               }
@@ -112,23 +114,24 @@ composite exp1 {
               mutable rstring line = "";
 
               if ("A" in results[caller]) {
-                line += " A"
+                line += " A";
               }
               if ("B" in results[caller]) {
-                line += " B"
+                line += " B";
               }
               if ("C" in results[caller]) {
-                line += " C"
+                line += " C";
               }
-              submit({id=caller, id=line}, Output);
+              submit({id=caller, letype=line}, Output);
             }
           }
+          
         }
 
     }
 
     () as File = FileSink(Output) {
-      param file : "supects.txt";
+      param file : "suspects.txt";
       format : csv;
     }
 }
