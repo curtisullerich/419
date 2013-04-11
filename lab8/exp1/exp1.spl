@@ -1,3 +1,5 @@
+
+//TO RUN: ./output/bin/standalone file1="/datasets/recordX.csv" file2="/datasets/recordY.csv"
 composite exp1 {
   graph 
     //read in both files as CSVs
