@@ -73,7 +73,7 @@ composite exp1 {
           
 
           if (currentPunct() == Sys.FinalMarker) {
-            mutable map<rstring callerid, set<rstring> types> results = {};
+            mutable map<rstring callerid, set<rstring>> results = {};
             for (rstring k in ab) {
               if(ab[k].size() >= 30) {
                 if (k in results) {
