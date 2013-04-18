@@ -9,14 +9,6 @@ composite childtracker {
         //defaultTuple : {time = "0", sensorid="default", childid="default", fromroom="default", toroom="default" };
         file : getSubmissionTimeValue("stream");
     }
- 
-    stream<rstring time, rstring childid, rstring parentname, rstring childname, rstring phone> LineStream2 = FileSource() { 
-      param 
-        format : csv;
-        hasHeaderLine : false;
-        //defaultTuple : {time = "0", childid="default", parent="default", phone="0" };
-        file : getSubmissionTimeValue("details");
-    }
    
     stream<rstring time, rstring id, rstring rm> PartA = Custom(LineStream) {
       logic
@@ -83,7 +75,80 @@ composite childtracker {
         }          
     }
 
-    stream<rstring time, rstring id, rstring phone> PartC = Custom(LineStream) {
+    stream<rstring time, rstring id, rstring phone> PartB = Custom(LineStream) {
+      logic
+        state: {
+
+          //map of childid, timestamp
+          mutable map<rstring, int64> tracks = {};
+
+          //map of childid, lastRoomSeen
+          mutable map<rstring, rstring> rooms = {};
+
+          //map of childid, alarmsounded
+          mutable map<rstring, boolean> alarmed = {};
+        }
+
+        onTuple LineStream : {
+      //Linestream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
+          mutable int64 hour = -1;
+          mutable int64 minute = -1;
+          mutable float64 second = -1;
+
+          list<rstring> components = tokenize(time, ":", false);
+          parseNumber(hour,components[0]);
+          parseNumber(minute,components[1]);
+          parseNumber(second,components[2]);
+
+          mutable int64 current = hour*60l*60l + minute*60l + (int64) second;
+
+          //should we check the difference before updating? Only edge case is if a single child has > 15 minutes between two records with no others in between
+          tracks[childid] = current;
+          alarmed[childid] = false;
+          rooms[childid] = rm;
+
+          //gives us the value of the current time
+          for (rstring k in tracks) {
+
+            //compare NOW to the last sensor datum for the child and see if it's been 15 minutes
+            if (current - tracks[k] > 15l*60l) {
+              //danger!
+
+              //all this string parsing was just helpful for debugging. remove before submission.
+              mutable int64 t = tracks[k];
+              int64 s = t % 60l;
+              t = t / 60l;
+              minute = t % 60l;
+              t = t / 60l;
+              hour = t;
+               
+              mutable rstring timeasdf = "";
+              if (hour < 10l) {
+                timeasdf += "0";
+              }
+              timeasdf += (rstring) hour + ":";
+              if (minute < 10l) {
+                timeasdf += "0";
+              }
+              timeasdf += (rstring) minute + ":";
+              if (s < 10l) {
+                timeasdf += "0";
+              }
+              timeasdf += (rstring) s;
+              
+              mutable rstring asdf = "time last seen: " + timeasdf + ". current time is " + time;
+
+              if (alarmed[k]) {
+
+              } else {
+                submit({current=time, id=k, lastseen=timeasdf, lastroom=rooms[k], phone="not yet"}, PartC);
+                alarmed[k] = true;
+              }
+            }
+          }
+        }          
+    }
+   stream<rstring time, rstring id, rstring phone> PartC = Custom(LineStream) {
       logic
         state: {
 
