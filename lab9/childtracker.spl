@@ -138,11 +138,11 @@ composite childtracker {
     }
 
     //dump output
-    () = FileSink(PartA) {
+    () as File = FileSink(PartA) {
       param file : "LocationLog.txt";
       format : csv;
     }
-    () = FileSink(PartC) {
+    () as File2 = FileSink(PartC) {
       param file : "MissingChildAlert.txt";
       format : csv;
     }
