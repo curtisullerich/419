@@ -132,7 +132,7 @@ composite childtracker {
               }
               timeasdf += (rstring) s;
               
-              submit({time=timeasdf, id=k, phone}, PartC);
+              submit({time=timeasdf, id=k, phone="not yet"}, PartC);
             }
           }
         }          
