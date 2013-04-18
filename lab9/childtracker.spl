@@ -110,7 +110,7 @@ composite childtracker {
           for (rstring k in tracks) {
             if (current - tracks[k] > 5l*60l) {
               //danger!
-              mutable int64 t = tracks[k];
+              /*mutable int64 t = tracks[k];
               int64 s = t % 60l;
               t = t / 60l;
               minute = t % 60l;
@@ -130,8 +130,8 @@ composite childtracker {
                 timeasdf += "0";
               }
               timeasdf += (rstring) s;
-              
-              submit({time=timeasdf, id=k, phone="not yet"}, PartC);
+              */              
+              submit({time=time, id=k, phone="not yet"}, PartC);
             }
           }
         }          
