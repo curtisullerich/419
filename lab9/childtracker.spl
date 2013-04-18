@@ -1,0 +1,76 @@
+//TO RUN: ./output/bin/standalone stream="SensorData.csv" details="ChildDetails.csv"
+composite childtracker {
+  graph 
+    //read in both files as CSVs
+    stream<rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom> LineStream = FileSource() { 
+      param 
+        format : csv;
+        hasHeaderLine : false;
+        //defaultTuple : {time = "0", sensorid="default", childid="default", fromroom="default", toroom="default" };
+        file : getSubmissionTimeValue("stream");
+    }
+ 
+    stream<rstring time, rstring childid, rstring parent, rstring phone> LineStream2 = FileSource() { 
+      param 
+        format : csv;
+        hasHeaderLine : false;
+        //defaultTuple : {time = "0", childid="default", parent="default", phone="0" };
+        file : getSubmissionTimeValue("details");
+    }
+   
+    stream<rstring time, rstring id, rstring rm> PartA = Custom(LineStream) {
+      logic
+        state: {
+
+          //map of childid, {timestamp, room}
+          mutable map<rstring, {int64 time, rstring room}> tracks = {};
+
+          mutable int64 previous = -1;
+        }
+
+        onTuple LineStream : {
+
+          //parse the time into its components
+          mutable int64 hour = -1;
+          mutable int64 minute = -1;
+          mutable float64 second = -1;
+
+          list<rstring> components = tokenize(time, ":", false);
+          parseNumber(hour,components[0]);
+          parseNumber(minute,components[1]);
+          parseNumber(second,components[2]);
+
+          mutable int64 current = hour*60l*60l + minute*60l + int64(second);
+
+          tracks[childid] = {childid:{time=current, room=toroom}};
+
+          if (previous == -1) {
+            previous = current;
+          } else {
+            if (current - previous > 5l*60l) {
+              previous = current;
+              //output!
+
+              for (rstring k in tracks) {
+                mutable int64 t = tracks[k].time;
+                second = t % 60l;
+                t = t / 60l;
+                minute = t % 60l;
+                t = t / 60l;
+                hour = t; 
+                rstring time = hour + ":" + minute + ":" + second;
+                submit({time=time, id=k, rm=tracks[k].room}, PartAOutput);
+              }
+            } else {
+              //nothing. just keep collecting.
+            }
+          }
+        }          
+    }
+
+    //dump output
+    () as File = FileSink(PartAOutput) {
+      param file : "LocationLog.txt";
+      format : csv;
+    }
+}
