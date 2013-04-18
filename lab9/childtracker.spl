@@ -89,6 +89,8 @@ composite childtracker {
 
           //map of childid, timestamp
           mutable map<rstring, int64> tracks = {};
+          //map of childid, alarmsounded
+          mutable map<rstring, boolean> alarmed = {};
         }
 
         onTuple LineStream : {
@@ -106,6 +108,9 @@ composite childtracker {
           if (toroom == "26") {
             //parse the time into its components
             tracks[childid] = current;
+          }
+          if (fromroom == "26") {
+            alarmed[childid] = false;
           }
           for (rstring k in tracks) {
             if (current - tracks[k] > 5l*60l) {
@@ -132,7 +137,13 @@ composite childtracker {
               timeasdf += (rstring) s;
               
               mutable rstring asdf = "been here since " + timeasdf + ". current time is " + time;
-              submit({time=asdf, id=k, phone="not yet"}, PartC);
+
+              if (alarmed[child]) {
+
+              } else {
+                submit({time=asdf, id=k, phone="not yet"}, PartC);
+                alarmed[child] = true;
+              }
             }
           }
         }          
