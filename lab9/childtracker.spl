@@ -120,6 +120,8 @@ composite childtracker {
             //compare NOW to the entry point for the child and see if it's been 5 minutes
             if (current - tracks[k] > 5l*60l) {
               //danger!
+
+              //all this string parsing was just helpful for debugging. remove before submission.
               mutable int64 t = tracks[k];
               int64 s = t % 60l;
               t = t / 60l;
@@ -160,7 +162,7 @@ composite childtracker {
       format : csv;
     }
     () as File2 = FileSink(PartC) {
-      param file : "MissingChildAlert.txt";
+      param file : "UnsafeRoomAlert.txt";
       format : csv;
     }
 }
