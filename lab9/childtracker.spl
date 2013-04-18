@@ -108,6 +108,7 @@ composite childtracker {
           if (toroom == "26") {
             //parse the time into its components
             tracks[childid] = current;
+            alarmed[childid] = false;
           }
           if (fromroom == "26") {
             alarmed[childid] = false;
