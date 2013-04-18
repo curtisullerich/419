@@ -88,23 +88,23 @@ composite childtracker {
         state: {
 
           //map of childid, timestamp
-          mutable map<rstring, int64 time> tracks = {};
+          mutable map<rstring, int64> tracks = {};
         }
 
         onTuple LineStream : {
       //Linestream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
+          mutable int64 hour = -1;
+          mutable int64 minute = -1;
+          mutable float64 second = -1;
+
+          list<rstring> components = tokenize(time, ":", false);
+          parseNumber(hour,components[0]);
+          parseNumber(minute,components[1]);
+          parseNumber(second,components[2]);
+
+          mutable int64 current = hour*60l*60l + minute*60l + (int64) second;
           if (toroom == "26") {
             //parse the time into its components
-            mutable int64 hour = -1;
-            mutable int64 minute = -1;
-            mutable float64 second = -1;
-
-            list<rstring> components = tokenize(time, ":", false);
-            parseNumber(hour,components[0]);
-            parseNumber(minute,components[1]);
-            parseNumber(second,components[2]);
-
-            mutable int64 current = hour*60l*60l + minute*60l + (int64) second;
 
             tracks[childid] = current;
           }
@@ -143,7 +143,7 @@ composite childtracker {
       param file : "LocationLog.txt";
       format : csv;
     }
-    () as File = FileSink(PartC) {
+    () as File2 = FileSink(PartC) {
       param file : "MissingChildAlert.txt";
       format : csv;
     }
