@@ -75,7 +75,7 @@ composite childtracker {
         }          
     }
 
-    stream<rstring time, rstring id, rstring phone> PartB = Custom(LineStream) {
+    stream<rstring current, rstring id, rstring lastseen, rstring lastroom, rstring phone> PartB = Custom(LineStream) {
       logic
         state: {
 
@@ -140,14 +140,15 @@ composite childtracker {
               if (alarmed[k]) {
 
               } else {
-                submit({current=time, id=k, lastseen=timeasdf, lastroom=rooms[k], phone="not yet"}, PartC);
+                submit({current=time, id=k, lastseen=timeasdf, lastroom=rooms[k], phone="not yet"}, PartB);
                 alarmed[k] = true;
               }
             }
           }
         }          
     }
-   stream<rstring time, rstring id, rstring phone> PartC = Custom(LineStream) {
+
+    stream<rstring time, rstring id, rstring phone> PartC = Custom(LineStream) {
       logic
         state: {
 
@@ -225,7 +226,11 @@ composite childtracker {
       param file : "LocationLog.txt";
       format : csv;
     }
-    () as File2 = FileSink(PartC) {
+    () as File2 = FileSink(PartB) {
+      param file : "MissingChildAlert.txt";
+      format : csv;
+    }
+    () as File3 = FileSink(PartC) {
       param file : "UnsafeRoomAlert.txt";
       format : csv;
     }
