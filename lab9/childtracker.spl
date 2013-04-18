@@ -10,7 +10,7 @@ composite childtracker {
         file : getSubmissionTimeValue("stream");
     }
  
-    stream<rstring time, rstring childid, rstring parent, rstring phone> LineStream2 = FileSource() { 
+    stream<rstring time, rstring childid, rstring parentname, rstring childname, rstring phone> LineStream2 = FileSource() { 
       param 
         format : csv;
         hasHeaderLine : false;
@@ -23,9 +23,9 @@ composite childtracker {
         state: {
 
           //map of childid, {timestamp, room}
-          mutable map<rstring, {int64 time, rstring room}> tracks = {};
+          mutable map<rstring, tuple<int64 time, rstring room>> tracks = {};
 
-          mutable int64 previous = -1;
+          mutable int64 previous = -1l;
         }
 
         onTuple LineStream : {
@@ -40,26 +40,40 @@ composite childtracker {
           parseNumber(minute,components[1]);
           parseNumber(second,components[2]);
 
-          mutable int64 current = hour*60l*60l + minute*60l + int64(second);
+          mutable int64 current = hour*60l*60l + minute*60l + (int64) second;
 
-          tracks[childid] = {childid:{time=current, room=toroom}};
+          tracks[childid] = {time=current, room=toroom};
 
-          if (previous == -1) {
+          if (previous == -1l) {
             previous = current;
           } else {
             if (current - previous > 5l*60l) {
               previous = current;
               //output!
 
-              for (rstring k in tracks) {
+             for (rstring k in tracks) {
                 mutable int64 t = tracks[k].time;
-                second = t % 60l;
+                int64 s = t % 60l;
                 t = t / 60l;
                 minute = t % 60l;
                 t = t / 60l;
-                hour = t; 
-                rstring time = hour + ":" + minute + ":" + second;
-                submit({time=time, id=k, rm=tracks[k].room}, PartAOutput);
+                hour = t;
+                 
+                mutable rstring timeasdf = "";
+                if (hour < 10l) {
+                  timeasdf += "0";
+                }
+                timeasdf += (rstring) hour + ":";
+                if (minute < 10l) {
+                  timeasdf += "0";
+                }
+                timeasdf += (rstring) minute + ":";
+                if (s < 10l) {
+                  timeasdf += "0";
+                }
+                timeasdf += (rstring) s;
+                
+                submit({time=timeasdf, id=k, rm=tracks[k].room}, PartA);
               }
             } else {
               //nothing. just keep collecting.
@@ -69,7 +83,7 @@ composite childtracker {
     }
 
     //dump output
-    () as File = FileSink(PartAOutput) {
+    () as File = FileSink(PartA) {
       param file : "LocationLog.txt";
       format : csv;
     }
