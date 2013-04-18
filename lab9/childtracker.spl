@@ -105,7 +105,7 @@ composite childtracker {
           //should we check the difference before updating? Only edge case is if a single child has > 15 minutes between two records with no others in between
           tracks[childid] = current;
           alarmed[childid] = false;
-          rooms[childid] = rm;
+          rooms[childid] = toroom;
 
           //gives us the value of the current time
           for (rstring k in tracks) {
@@ -136,8 +136,7 @@ composite childtracker {
               }
               timeasdf += (rstring) s;
               
-              mutable rstring asdf = "time last seen: " + timeasdf + ". current time is " + time;
-
+              //mutable rstring asdf = "time last seen: " + timeasdf + ". current time is " + time;
               if (alarmed[k]) {
 
               } else {
