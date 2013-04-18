@@ -111,9 +111,13 @@ composite childtracker {
             alarmed[childid] = false;
           }
           if (fromroom == "26") {
-            alarmed[childid] = false;
+            //alarmed[childid] = false;
           }
+
+          //gives us the value of the current time
           for (rstring k in tracks) {
+
+            //compare NOW to the entry point for the child and see if it's been 5 minutes
             if (current - tracks[k] > 5l*60l) {
               //danger!
               mutable int64 t = tracks[k];
@@ -139,11 +143,11 @@ composite childtracker {
               
               mutable rstring asdf = "been here since " + timeasdf + ". current time is " + time;
 
-              if (alarmed[childid]) {
+              if (alarmed[k]) {
 
               } else {
                 submit({time=asdf, id=k, phone="not yet"}, PartC);
-                alarmed[childid] = true;
+                alarmed[k] = true;
               }
             }
           }
