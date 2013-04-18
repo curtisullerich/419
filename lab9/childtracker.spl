@@ -111,7 +111,7 @@ composite childtracker {
           for (rstring k in tracks) {
             if (current - tracks[k] > 5l*60l) {
               //danger!
-              mutable int64 t = tracks[k].time;
+              mutable int64 t = tracks[k];
               int64 s = t % 60l;
               t = t / 60l;
               minute = t % 60l;
