@@ -45,6 +45,7 @@ composite childtracker {
           tracks[childid] = {time=current, room=toroom};
 
           if (previous == -1l) {
+            //TODO don't set to current, just increment by 5
             previous = current;
           } else {
             if (current - previous > 5l*60l) {
@@ -82,9 +83,68 @@ composite childtracker {
         }          
     }
 
+    stream<rstring time, rstring id, rstring phone> PartC = Custom(LineStream) {
+      logic
+        state: {
+
+          //map of childid, timestamp
+          mutable map<rstring, int64 time> tracks = {};
+        }
+
+        onTuple LineStream : {
+      //Linestream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
+          if (toroom == "26") {
+            //parse the time into its components
+            mutable int64 hour = -1;
+            mutable int64 minute = -1;
+            mutable float64 second = -1;
+
+            list<rstring> components = tokenize(time, ":", false);
+            parseNumber(hour,components[0]);
+            parseNumber(minute,components[1]);
+            parseNumber(second,components[2]);
+
+            mutable int64 current = hour*60l*60l + minute*60l + (int64) second;
+
+            tracks[childid] = current;
+          }
+          for (rstring k in tracks) {
+            if (current - tracks[k] > 5l*60l) {
+              //danger!
+              mutable int64 t = tracks[k].time;
+              int64 s = t % 60l;
+              t = t / 60l;
+              minute = t % 60l;
+              t = t / 60l;
+              hour = t;
+               
+              mutable rstring timeasdf = "";
+              if (hour < 10l) {
+                timeasdf += "0";
+              }
+              timeasdf += (rstring) hour + ":";
+              if (minute < 10l) {
+                timeasdf += "0";
+              }
+              timeasdf += (rstring) minute + ":";
+              if (s < 10l) {
+                timeasdf += "0";
+              }
+              timeasdf += (rstring) s;
+              
+              submit({time=timeasdf, id=k, phone}, PartC);
+            }
+          }
+        }          
+    }
+
     //dump output
     () as File = FileSink(PartA) {
       param file : "LocationLog.txt";
+      format : csv;
+    }
+    () as File = FileSink(PartC) {
+      param file : "MissingChildAlert.txt";
       format : csv;
     }
 }
