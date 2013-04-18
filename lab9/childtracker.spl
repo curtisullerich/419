@@ -105,7 +105,6 @@ composite childtracker {
           mutable int64 current = hour*60l*60l + minute*60l + (int64) second;
           if (toroom == "26") {
             //parse the time into its components
-
             tracks[childid] = current;
           }
           for (rstring k in tracks) {
@@ -139,11 +138,11 @@ composite childtracker {
     }
 
     //dump output
-    () as File = FileSink(PartA) {
+    () = FileSink(PartA) {
       param file : "LocationLog.txt";
       format : csv;
     }
-    () as File2 = FileSink(PartC) {
+    () = FileSink(PartC) {
       param file : "MissingChildAlert.txt";
       format : csv;
     }
