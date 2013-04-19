@@ -298,7 +298,7 @@ composite childtracker {
                   }
                 }
               }
-              for (rstring rm in exits) {
+/*              for (rstring rm in exits) {
                 for (rstring ch in exits[rm]) {
                   if (exits[rm][ch] >= previous) {
                     //output
@@ -309,7 +309,7 @@ composite childtracker {
                     }
                   }
                 }
-              }
+              }*/
 
               mutable int64 t = current;
               int64 s = t % 60l;
@@ -332,8 +332,8 @@ composite childtracker {
               }
               timeasdf += (rstring) s;
               
-              for (rstring k in outputs) {
-                submit({time=timeasdf, room=k, children=size(outputs[k])}, PartD1);
+              for (rstring rm in outputs) {
+                submit({time=timeasdf, room=rm, children=size(outputs[rm])}, PartD1);
               }
               previous = current;
             } else {
