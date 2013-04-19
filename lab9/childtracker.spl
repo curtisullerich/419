@@ -220,7 +220,7 @@ composite childtracker {
               }
               timeasdf += (rstring) s;
               
-              mutable rstring asdf = "been here since " + timeasdf + ". current time is " + time;
+              //mutable rstring asdf = "been here since " + timeasdf + ". current time is " + time;
 
               if (alarmed[ch]) {
 
@@ -237,7 +237,7 @@ composite childtracker {
                     break;
                   }
                 }
-                submit({time=asdf, id=ch, phone=ph}, PartC);
+                submit({time=time, id=ch, phone=ph}, PartC);
                 alarmed[ch] = true;
               }
             }
