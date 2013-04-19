@@ -63,7 +63,7 @@ composite childtracker {
                 }
                 timeasdf += (rstring) s;*/
                 
-                if (!(tracks[ch] == "E")) {
+                if (!(tracks[ch].room == "E")) {
                   submit({time=time, id=ch, rm=tracks[ch].room}, PartA);
                 }
               }
