@@ -297,7 +297,11 @@ composite childtracker {
                   //ch is in entries[rm] at this point
                   if (ch in exits[rm]) {
                     if (exits[rm][ch] < entries[rm][ch]) {
-                      insertM(outputs[rm], ch);
+                      if (rm in outputs) {
+                        insertM(outputs[rm], ch);
+                      } else {
+                        outputs[rm] = {ch};
+                      }
                     }
                   } else {
                     if (rm in outputs) {
