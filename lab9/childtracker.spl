@@ -220,7 +220,7 @@ composite childtracker {
         }          
     }
 
-    stream<rstring time, rstring room, int64 children> PartD1 = Custom(LineStream) {
+    stream<rstring time, rstring room, int32 children> PartD1 = Custom(LineStream) {
       logic
         state: {
 
@@ -259,7 +259,7 @@ composite childtracker {
               exits[toroom][childid] = -1l;
             }
           } else {
-            exits[toroom] = {childid:-1};
+            exits[toroom] = {childid:-1l};
           }
 
           //visted = (entered room in last hour) OR (exited room in last hour) OR (exit time is before enter time [never exited])
