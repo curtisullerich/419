@@ -3,7 +3,7 @@ use spl.file::*;
 composite childtracker {
   graph 
     //read in both files as CSVs
-    stream<rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom> LineStream = FileSource() { 
+    stream<rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom> SensorDataStream = FileSource() { 
       param 
         format : csv;
         hasHeaderLine : false;
@@ -12,7 +12,7 @@ composite childtracker {
     }
    
     //output the location of each child every 5 minuets
-    stream<rstring time, rstring id, rstring rm> PartA = Custom(LineStream) {
+    stream<rstring time, rstring id, rstring rm> LocationLogStream = Custom(SensorDataStream) {
       logic
         state: {
 
@@ -22,7 +22,7 @@ composite childtracker {
           mutable int64 previous = -1l;
         }
 
-        onTuple LineStream : {
+        onTuple SensorDataStream : {
 
           //parse the time into its components
           mutable int64 hour = -1;
@@ -64,7 +64,7 @@ composite childtracker {
                 timeasdf += (rstring) s;*/
                 
                 if (!(tracks[ch].room == "E")) {
-                  submit({time=time, id=ch, rm=tracks[ch].room}, PartA);
+                  submit({time=time, id=ch, rm=tracks[ch].room}, LocationLogStream);
                 }
               }
               previous = current;
@@ -76,7 +76,7 @@ composite childtracker {
     }
 
     //generate missing child reports if a child has not been seen for more than 15 minutes
-    stream<rstring current, rstring id, rstring lastseen, rstring lastroom, rstring phone> PartB = Custom(LineStream) {
+    stream<rstring current, rstring id, rstring lastseen, rstring lastroom, rstring phone> MissingChildAlertStream = Custom(SensorDataStream) {
       logic
         state: {
           //map of childid, timestamp
@@ -87,8 +87,8 @@ composite childtracker {
           mutable map<rstring, boolean> alarmed = {};
         }
 
-        onTuple LineStream : {
-          //Linestream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
+        onTuple SensorDataStream : {
+          //SensorDataStream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
           mutable int64 hour = -1;
           mutable int64 minute = -1;
           mutable float64 second = -1;
@@ -150,7 +150,7 @@ composite childtracker {
                 }
                 if (!(rooms[ch] == "E")) {
                   //don't output if they exited
-                  submit({current=time, id=ch, lastseen=timeasdf, lastroom=rooms[ch], phone=ph}, PartB);
+                  submit({current=time, id=ch, lastseen=timeasdf, lastroom=rooms[ch], phone=ph}, MissingChildAlertStream);
                 }
                 alarmed[ch] = true;
               }
@@ -159,7 +159,7 @@ composite childtracker {
         }          
     }
 
-    stream<rstring time, rstring id, rstring phone> PartC = Custom(LineStream) {
+    stream<rstring time, rstring id, rstring phone> UnsafeRoomAlertString = Custom(SensorDataStream) {
       logic
         state: {
 
@@ -169,8 +169,8 @@ composite childtracker {
           mutable map<rstring, boolean> alarmed = {};
         }
 
-        onTuple LineStream : {
-          //Linestream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
+        onTuple SensorDataStream : {
+          //SensorDataStream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
           mutable int64 hour = -1;
           mutable int64 minute = -1;
           mutable float64 second = -1;
@@ -234,7 +234,7 @@ composite childtracker {
                     break;
                   }
                 }
-                submit({time=timeasdf, id=ch, phone=ph}, PartC);
+                submit({time=timeasdf, id=ch, phone=ph}, UnsafeRoomAlertString);
                 alarmed[ch] = true;
               }
             }
@@ -242,7 +242,7 @@ composite childtracker {
         }          
     }
 
-    stream<rstring time, rstring room, int32 children> PartD1 = Custom(LineStream) {
+    stream<rstring time, rstring room, int32 children> RoomStatsStream = Custom(SensorDataStream) {
       logic
         state: {
 
@@ -255,8 +255,8 @@ composite childtracker {
 
           mutable int64 previous = -1l;
         }
-        //Linestream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
-        onTuple LineStream : {
+        //SensorDataStream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
+        onTuple SensorDataStream : {
 
           //parse the time into its components
           mutable int64 hour = -1;
@@ -359,7 +359,7 @@ composite childtracker {
                 if ("E" in outputs[rm]) {
                   lesize = lesize - 1;
                 }
-                submit({time=timeasdf, room=rm, children=lesize}, PartD1);
+                submit({time=timeasdf, room=rm, children=lesize}, RoomStatsStream);
               }
               previous = current;
             } else {
@@ -369,7 +369,7 @@ composite childtracker {
         }          
     }
 
-    stream<rstring time, rstring childid, int32 rooms> PartD2 = Custom(LineStream) {
+    stream<rstring time, rstring childid, int32 rooms> ChildStatsStream = Custom(SensorDataStream) {
       logic
         state: {
 
@@ -382,8 +382,8 @@ composite childtracker {
 
           mutable int64 previous = -1l;
         }
-        //Linestream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
-        onTuple LineStream : {
+        //SensorDataStream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
+        onTuple SensorDataStream : {
 
           //parse the time into its components
           mutable int64 hour = -1;
@@ -486,7 +486,7 @@ composite childtracker {
                 if ("E" in outputs[ch]) {
                   lesize = lesize - 1;
                 }
-                submit({time=timeasdf, childid=ch, rooms=lesize}, PartD2);
+                submit({time=timeasdf, childid=ch, rooms=lesize}, ChildStatsStream);
               }
               previous = current;
             } else {
@@ -496,23 +496,23 @@ composite childtracker {
         }          
     }
     //dump output
-    () as File = FileSink(PartA) {
+    () as LocationLogSink = FileSink(LocationLogStream) {
       param file : "LocationLog.txt";
       format : csv;
     }
-    () as File2 = FileSink(PartB) {
+    () as MissingChildAlertSink = FileSink(MissingChildAlertStream) {
       param file : "MissingChildAlert.txt";
       format : csv;
     }
-    () as File3 = FileSink(PartC) {
+    () as UnsafeRoomAlertSink = FileSink(UnsafeRoomAlertString) {
       param file : "UnsafeRoomAlert.txt";
       format : csv;
     }
-    () as File4 = FileSink(PartD1) {
+    () as RoomStatsSink = FileSink(RoomStatsStream) {
       param file : "RoomStats.txt";
       format : csv;
     }
-    () as File5 = FileSink(PartD2) {
+    () as ChildStatsSink = FileSink(ChildStatsStream) {
       param file : "ChildStats.txt";
       format : csv;
     }
