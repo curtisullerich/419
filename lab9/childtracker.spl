@@ -108,14 +108,14 @@ composite childtracker {
           rooms[childid] = toroom;
 
           //gives us the value of the current time
-          for (rstring k in tracks) {
+          for (rstring ch in tracks) {
 
             //compare NOW to the last sensor datum for the child and see if it's been 15 minutes
-            if (current - tracks[k] > 15l*60l) {
+            if (current - tracks[ch] > 15l*60l) {
               //danger!
 
               //all this string parsing was just helpful for debugging. remove before submission.
-              mutable int64 t = tracks[k];
+              mutable int64 t = tracks[ch];
               int64 s = t % 60l;
               t = t / 60l;
               minute = t % 60l;
@@ -137,7 +137,7 @@ composite childtracker {
               timeasdf += (rstring) s;
               
               //mutable rstring asdf = "time last seen: " + timeasdf + ". current time is " + time;
-              if (alarmed[k]) {
+              if (alarmed[ch]) {
 
               } else {
                 mutable int32 err = 0;
@@ -152,8 +152,8 @@ composite childtracker {
                     break;
                   }
                 }
-                submit({current=time, id=k, lastseen=timeasdf, lastroom=rooms[k], phone=ph}, PartB);
-                alarmed[k] = true;
+                submit({current=time, id=ch, lastseen=timeasdf, lastroom=rooms[ch], phone=ph}, PartB);
+                alarmed[ch] = true;
               }
             }
           }
