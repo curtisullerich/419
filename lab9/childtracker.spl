@@ -283,7 +283,7 @@ composite childtracker {
               //output!
               //map of room, set<children>
               mutable map<rstring, set<rstring>> outputs = {};
-/*              for (rstring rm in entries) {
+              for (rstring rm in entries) {
                 for (rstring ch in entries[rm]) {
                   if (entries[rm][ch] >= previous) {
                     //output
@@ -293,11 +293,11 @@ composite childtracker {
                       outputs[rm] = {ch};
                     }
                   }
-                  if (exits[rm][ch] < entries[rm][ch]) {
+/*                  if (exits[rm][ch] < entries[rm][ch]) {
                     insertM(outputs[rm], ch);
-                  }
+                  }*/
                 }
-              }*/
+              }
 /*              for (rstring rm in exits) {
                 for (rstring ch in exits[rm]) {
                   if (exits[rm][ch] >= previous) {
