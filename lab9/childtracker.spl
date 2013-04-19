@@ -264,7 +264,7 @@ composite childtracker {
 
           //do this so comparisons work later
           //this initializes the last known exit from a room to -1 if it doesn't yet exist
-          if (toroom in exits) {
+/*          if (toroom in exits) {
             if (childid in exits[toroom]) {
               //good to go. already exists. don't add it.
             } else {
@@ -272,7 +272,7 @@ composite childtracker {
             }
           } else {
             exits[toroom] = {childid:-1l};
-          }
+          }*/
 
           //visited = (entered room in last hour) OR (exited room in last hour) OR (exit time is before enter time [never exited])
 
@@ -293,8 +293,18 @@ composite childtracker {
                       outputs[rm] = {ch};
                     }
                   }
-                  if (exits[rm][ch] < entries[rm][ch]) {
-                    insertM(outputs[rm], ch);
+             
+                  //ch is in entries[rm] at this point
+                  if (ch in exits[rm]) {
+                    if (exits[rm][ch] < entries[rm][ch]) {
+                      insertM(outputs[rm], ch);
+                    }
+                  } else {
+                    if (rm in outputs) {
+                      insertM(outputs[rm], ch);
+                    } else {
+                      outputs[rm] = {ch};
+                    }
                   }
                 }
               }
