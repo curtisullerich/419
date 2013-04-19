@@ -214,7 +214,7 @@ composite childtracker {
 
               } else {
                 mutable int32 err = 0;
-                mutable uint64 fp = fopen("products.csv", "read", err);
+                mutable uint64 fp = fopen("ChildDetails.csv", "read", err);
                 mutable rstring ph = "unknown";
                 while (!feof(fp)) {
                   rstring contents = freadLine(fp, err);
