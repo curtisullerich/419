@@ -62,7 +62,7 @@ composite childtracker {
                 }
                 timeasdf += (rstring) s;*/
                 
-                submit({time=time, id=ch, rm=tracks[k].room}, PartA);
+                submit({time=time, id=ch, rm=tracks[ch].room}, PartA);
               }
               previous = current;
             } else {
