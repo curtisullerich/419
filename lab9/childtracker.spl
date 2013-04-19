@@ -248,8 +248,19 @@ composite childtracker {
 
           mutable int64 current = hour*60l*60l + minute*60l + (int64) second;
 
-          entries[toroom][childid] = current;
-          exits[fromroom][childid] = current;
+
+          if (toroom in entries) {
+            entries[toroom][childid] = current;
+          } else {
+            entries[toroom] = {childid:current};
+          }
+          //entries[toroom][childid] = current;
+          if (toroom in exits) {
+            exits[fromroom][childid] = current;
+          } else {
+            exits[fromroom] = {childid:current};
+          }
+          //exits[fromroom][childid] = current;
 
           //do this so comparisons work later
           if (toroom in exits) {
