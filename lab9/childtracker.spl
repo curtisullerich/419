@@ -140,7 +140,19 @@ composite childtracker {
               if (alarmed[k]) {
 
               } else {
-                submit({current=time, id=k, lastseen=timeasdf, lastroom=rooms[k], phone="not yet"}, PartB);
+                mutable int32 err = 0;
+                mutable uint64 fp = fopen("ChildDetails.csv", "read", err);
+                mutable rstring ph = "unknown";
+                while (!feof(fp)) {
+                  rstring contents = freadLine(fp, err);
+                  list<rstring> token = csvTokenize(contents);
+                  if (token[1] == ch) {
+                    ph = token[4];
+                    fclose(fp, err);
+                    break;
+                  }
+                }
+                submit({current=time, id=k, lastseen=timeasdf, lastroom=rooms[k], phone=ph}, PartB);
                 alarmed[k] = true;
               }
             }
