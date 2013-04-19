@@ -159,7 +159,7 @@ composite childtracker {
         }          
     }
 
-    stream<rstring time, rstring id, rstring phone> UnsafeRoomAlertString = Custom(SensorDataStream) {
+    stream<rstring time, rstring id, rstring phone> UnsafeRoomAlertStream = Custom(SensorDataStream) {
       logic
         state: {
 
@@ -234,7 +234,7 @@ composite childtracker {
                     break;
                   }
                 }
-                submit({time=timeasdf, id=ch, phone=ph}, UnsafeRoomAlertString);
+                submit({time=timeasdf, id=ch, phone=ph}, UnsafeRoomAlertStream);
                 alarmed[ch] = true;
               }
             }
@@ -504,7 +504,7 @@ composite childtracker {
       param file : "MissingChildAlert.txt";
       format : csv;
     }
-    () as UnsafeRoomAlertSink = FileSink(UnsafeRoomAlertString) {
+    () as UnsafeRoomAlertSink = FileSink(UnsafeRoomAlertStream) {
       param file : "UnsafeRoomAlert.txt";
       format : csv;
     }
