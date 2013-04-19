@@ -354,13 +354,139 @@ composite childtracker {
               }
               timeasdf += (rstring) s;
 
-
               for (rstring rm in outputs) {
                 mutable int32 lesize = size(outputs[rm]);
                 if ("E" in outputs[rm]) {
                   lesize = lesize - 1;
                 }
                 submit({time=timeasdf, room=rm, children=lesize}, PartD1);
+              }
+              previous = current;
+            } else {
+              //nothing. just keep collecting.
+            }
+          }
+        }          
+    }
+
+    stream<rstring time, rstring childid, int32 rooms> PartD2 = Custom(LineStream) {
+      logic
+        state: {
+
+          //TODO on other parts do I need to remove child from map when they exit the room?
+
+          //map of childid, map of room, entry time
+          mutable map<rstring, map<rstring, int64>> entries = {};
+          //map of chilid, map of room, exit time
+          mutable map<rstring, map<rstring, int64>> exits = {};
+
+          mutable int64 previous = -1l;
+        }
+        //Linestream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
+        onTuple LineStream : {
+
+          //parse the time into its components
+          mutable int64 hour = -1;
+          mutable int64 minute = -1;
+          mutable float64 second = -1;
+
+          list<rstring> components = tokenize(time, ":", false);
+          parseNumber(hour,components[0]);
+          parseNumber(minute,components[1]);
+          parseNumber(second,components[2]);
+
+          mutable int64 current = hour*60l*60l + minute*60l + (int64) second;
+
+          if (childid in entries) {
+            entries[childid][toroom] = current;
+          } else {
+            entries[childid] = {toroom:current};
+          }
+          if (childid in exits) {
+            exits[childid][fromroom] = current;
+          } else {
+            exits[childid] = {fromroom:current};
+          }
+          //visited = (entered room in last hour) OR (exited room in last hour) OR (exit time is before enter time [never exited])
+
+          if (previous == -1l) {
+            previous = current;
+          } else {
+            if (current - previous > 60l*60l) {
+              //output!
+              //map of childid, set<room>
+              mutable map<rstring, set<rstring>> outputs = {};
+              for (rstring ch in entries) {
+                for (rstring rm in entries[ch]) {
+                  if (entries[ch][rm] >= previous) {
+                    //output
+                    if (ch in outputs) {
+                      insertM(outputs[ch], rm);
+                    } else {
+                      outputs[ch] = {rm};
+                    }
+                  }
+             
+                  //rm is in entries[ch] at this point
+
+                  if (ch in exits && rm in exits[ch]) {
+                    if (exits[ch][rm] < entries[ch][rm]) {
+
+                      if (ch in outputs) {
+                        insertM(outputs[ch], rm);
+                      } else {
+                        outputs[ch] = {rm};
+                      }
+                    }
+                  } else {
+                    if (ch in outputs) {
+                      insertM(outputs[ch], rm);
+                    } else {
+                      outputs[ch] = {rm};
+                    }
+                  }
+                }
+              }
+              for (rstring ch in exits) {
+                for (rstring rm in exits[ch]) {
+                  if (exits[ch][rm] >= previous) {
+                    //output
+                      if (ch in outputs) {
+                      insertM(outputs[ch], rm);
+                    } else {
+                      outputs[ch] = {rm};
+                    }
+                  }
+                }
+              }
+
+              mutable int64 t = current;
+              int64 s = t % 60l;
+              t = t / 60l;
+              minute = t % 60l;
+              t = t / 60l;
+              hour = t;
+               
+              mutable rstring timeasdf = "";
+              if (hour < 10l) {
+                timeasdf += "0";
+              }
+              timeasdf += (rstring) hour + ":";
+              if (minute < 10l) {
+                timeasdf += "0";
+              }
+              timeasdf += (rstring) minute + ":";
+              if (s < 10l) {
+                timeasdf += "0";
+              }
+              timeasdf += (rstring) s;
+
+              for (rstring ch in outputs) {
+                mutable int32 lesize = size(outputs[ch]);
+                if ("E" in outputs[ch]) {
+                  lesize = lesize - 1;
+                }
+                submit({time=timeasdf, childid=ch, rooms=lesize}, PartD2);
               }
               previous = current;
             } else {
@@ -384,6 +510,10 @@ composite childtracker {
     }
     () as File4 = FileSink(PartD1) {
       param file : "RoomStats.txt";
+      format : csv;
+    }
+    () as File5 = FileSink(PartD2) {
+      param file : "ChildStats.txt";
       format : csv;
     }
 }
