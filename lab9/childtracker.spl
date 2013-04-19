@@ -256,10 +256,10 @@ composite childtracker {
             if (childid in exits[toroom]) {
               //good to go
             } else {
-              exits[toroom][ch] = -1l;
+              exits[toroom][childid] = -1l;
             }
           } else {
-            exits[toroom] = {ch:-1};
+            exits[toroom] = {childid:-1};
           }
 
           //visted = (entered room in last hour) OR (exited room in last hour) OR (exit time is before enter time [never exited])
@@ -322,7 +322,7 @@ composite childtracker {
               timeasdf += (rstring) s;
               
               for (rstring k in outputs) {
-                submit({time=timeasdf, room=k, size(outputs[k])}, PartD1);
+                submit({time=timeasdf, room=k, children=size(outputs[k])}, PartD1);
               }
               previous = current;
             } else {
