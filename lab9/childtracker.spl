@@ -215,7 +215,7 @@ composite childtracker {
                 mutable uint64 fp = fopen("products.csv", "read", err);
                 mutable rstring ph = "unknown";
                 while (!feof(fp)) {
-                  rstring contents = freadLine(fp, err)
+                  rstring contents = freadLine(fp, err);
                   list<rstring> token = csvTokenize(contents);
                   if (token[1] == ch) {
                     ph = token[4];
