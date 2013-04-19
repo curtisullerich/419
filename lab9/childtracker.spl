@@ -255,7 +255,7 @@ composite childtracker {
             entries[toroom] = {childid:current};
           }
           //entries[toroom][childid] = current;
-          if (toroom in exits) {
+          if (fromroom in exits) {
             exits[fromroom][childid] = current;
           } else {
             exits[fromroom] = {childid:current};
@@ -263,9 +263,10 @@ composite childtracker {
           //exits[fromroom][childid] = current;
 
           //do this so comparisons work later
+          //this initializes the last known exit from a room to -1 if it doesn't yet exist
           if (toroom in exits) {
             if (childid in exits[toroom]) {
-              //good to go
+              //good to go. already exists. don't add it.
             } else {
               exits[toroom][childid] = -1l;
             }
@@ -273,7 +274,7 @@ composite childtracker {
             exits[toroom] = {childid:-1l};
           }
 
-          //visted = (entered room in last hour) OR (exited room in last hour) OR (exit time is before enter time [never exited])
+          //visited = (entered room in last hour) OR (exited room in last hour) OR (exit time is before enter time [never exited])
 
           if (previous == -1l) {
             previous = current;
@@ -309,7 +310,6 @@ composite childtracker {
                   }
                 }
               }
-
 
               mutable int64 t = current;
               int64 s = t % 60l;
