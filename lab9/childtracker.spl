@@ -37,7 +37,6 @@ composite childtracker {
           tracks[childid] = {time=current, room=toroom};
 
           if (previous == -1l) {
-            //TODO don't set to current, just increment by 5
             previous = current;
           } else {
             if (current - previous > 5l*60l) {
@@ -221,6 +220,117 @@ composite childtracker {
         }          
     }
 
+    stream<rstring time, rstring room, int64 children> PartD1 = Custom(LineStream) {
+      logic
+        state: {
+
+          //TODO on other parts do I need to remove child from map when they exit the room?
+
+          //map of room, map of childid, entry time
+          mutable map<rstring, map<rstring, int64>> entries = {};
+          //map of room, map of childid, exit time
+          mutable map<rstring, map<rstring, int64>> exits = {};
+
+          mutable int64 previous = -1l;
+        }
+        //Linestream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
+        onTuple LineStream : {
+
+          //parse the time into its components
+          mutable int64 hour = -1;
+          mutable int64 minute = -1;
+          mutable float64 second = -1;
+
+          list<rstring> components = tokenize(time, ":", false);
+          parseNumber(hour,components[0]);
+          parseNumber(minute,components[1]);
+          parseNumber(second,components[2]);
+
+          mutable int64 current = hour*60l*60l + minute*60l + (int64) second;
+
+          entries[toroom][childid] = current;
+          exits[fromroom][childid] = current;
+
+          //do this so comparisons work later
+          if (toroom in exits) {
+            if (childid in exits[toroom]) {
+              //good to go
+            } else {
+              exits[toroom][ch] = -1l;
+            }
+          } else {
+            exits[toroom] = {ch:-1};
+          }
+
+          //visted = (entered room in last hour) OR (exited room in last hour) OR (exit time is before enter time [never exited])
+
+          if (previous == -1l) {
+            previous = current;
+          } else {
+            if (current - previous > 60l*60l) {
+              //output!
+              //map of room, set<children>
+              mutable map<rstring, set<rstring>> outputs = {};
+              for (rstring rm in entries) {
+                for (rstring ch in entries[rm]) {
+                  if (entries[rm][ch] >= previous) {
+                    //output
+                    if (rm in outputs) {
+                      outputs[rm] = {ch};
+                    } else {
+                      insertM(outputs[rm], ch);
+                    }
+                    if (exits[rm][ch] < entries[rm][ch]) {
+                      insertM(outputs[rm], ch);
+                    }
+                  }
+                }
+              }
+              for (rstring rm in exits) {
+                for (rstring ch in exits[rm]) {
+                  if (exits[rm][ch] >= previous) {
+                    //output
+                    if (rm in outputs) {
+                      outputs[rm] = {ch};
+                    } else {
+                      insertM(outputs[rm], ch);
+                    }
+                  }
+                }
+              }
+
+
+              mutable int64 t = current;
+              int64 s = t % 60l;
+              t = t / 60l;
+              minute = t % 60l;
+              t = t / 60l;
+              hour = t;
+               
+              mutable rstring timeasdf = "";
+              if (hour < 10l) {
+                timeasdf += "0";
+              }
+              timeasdf += (rstring) hour + ":";
+              if (minute < 10l) {
+                timeasdf += "0";
+              }
+              timeasdf += (rstring) minute + ":";
+              if (s < 10l) {
+                timeasdf += "0";
+              }
+              timeasdf += (rstring) s;
+              
+              for (rstring k in outputs) {
+                submit({time=timeasdf, room=k, size(outputs[k])}, PartD1);
+              }
+              previous = current;
+            } else {
+              //nothing. just keep collecting.
+            }
+          }
+        }          
+    }
     //dump output
     () as File = FileSink(PartA) {
       param file : "LocationLog.txt";
@@ -232,6 +342,10 @@ composite childtracker {
     }
     () as File3 = FileSink(PartC) {
       param file : "UnsafeRoomAlert.txt";
+      format : csv;
+    }
+    () as File4 = FileSink(PartD1) {
+      param file : "RoomStats.txt";
       format : csv;
     }
 }
