@@ -148,7 +148,10 @@ composite childtracker {
                     break;
                   }
                 }
-                submit({current=time, id=ch, lastseen=timeasdf, lastroom=rooms[ch], phone=ph}, PartB);
+                if (!(rooms[ch] == "E")) {
+                  //don't output if they exited
+                  submit({current=time, id=ch, lastseen=timeasdf, lastroom=rooms[ch], phone=ph}, PartB);
+                }
                 alarmed[ch] = true;
               }
             }
