@@ -183,11 +183,11 @@ composite childtracker {
           for (rstring ch in tracks) {
 
             //compare NOW to the entry point for the child and see if it's been 5 minutes
-            if (current - tracks[k] > 5l*60l) {
+            if (current - tracks[ch] > 5l*60l) {
               //danger!
 
               //all this string parsing was just helpful for debugging. remove before submission.
-              mutable int64 t = tracks[k];
+              mutable int64 t = tracks[ch];
               int64 s = t % 60l;
               t = t / 60l;
               minute = t % 60l;
@@ -213,6 +213,7 @@ composite childtracker {
               if (alarmed[ch]) {
 
               } else {
+                mutable int32 err = 0;
                 mutable uint64 fp = fopen("products.csv", "read", err);
                 mutable rstring ph = "unknown";
                 while (!feof(fp)) {
