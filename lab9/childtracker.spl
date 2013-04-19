@@ -1,4 +1,5 @@
 //TO RUN: ./output/bin/standalone stream="SensorData.csv" details="ChildDetails.csv"
+use spl.file::*; 
 composite childtracker {
   graph 
     //read in both files as CSVs
