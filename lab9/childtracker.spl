@@ -293,16 +293,16 @@ composite childtracker {
                       outputs[rm] = {ch};
                     }
                   }
-/*                  if (exits[rm][ch] < entries[rm][ch]) {
+                  if (exits[rm][ch] < entries[rm][ch]) {
                     insertM(outputs[rm], ch);
-                  }*/
+                  }
                 }
               }
               for (rstring rm in exits) {
                 for (rstring ch in exits[rm]) {
                   if (exits[rm][ch] >= previous) {
                     //output
-                    if (rm in outputs) {
+                      if (rm in outputs) {
                       insertM(outputs[rm], ch);
                     } else {
                       outputs[rm] = {ch};
