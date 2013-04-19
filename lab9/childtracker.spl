@@ -270,32 +270,16 @@ composite childtracker {
 
           mutable int64 current = hour*60l*60l + minute*60l + (int64) second;
 
-
           if (toroom in entries) {
             entries[toroom][childid] = current;
           } else {
             entries[toroom] = {childid:current};
           }
-          //entries[toroom][childid] = current;
           if (fromroom in exits) {
             exits[fromroom][childid] = current;
           } else {
             exits[fromroom] = {childid:current};
           }
-          //exits[fromroom][childid] = current;
-
-          //do this so comparisons work later
-          //this initializes the last known exit from a room to -1 if it doesn't yet exist
-/*          if (toroom in exits) {
-            if (childid in exits[toroom]) {
-              //good to go. already exists. don't add it.
-            } else {
-              exits[toroom][childid] = -1l;
-            }
-          } else {
-            exits[toroom] = {childid:-1l};
-          }*/
-
           //visited = (entered room in last hour) OR (exited room in last hour) OR (exit time is before enter time [never exited])
 
           if (previous == -1l) {
@@ -373,6 +357,9 @@ composite childtracker {
 
               for (rstring rm in outputs) {
                 mutable int32 lesize = size(outputs[rm]);
+                if ("E" in outputs[rm]) {
+                  lesize = lesize - 1;
+                }
                 submit({time=timeasdf, room=rm, children=lesize}, PartD1);
               }
               previous = current;
