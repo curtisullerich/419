@@ -11,6 +11,7 @@ composite childtracker {
         file : getSubmissionTimeValue("stream");
     }
    
+    //output the location of each child every 5 minuets
     stream<rstring time, rstring id, rstring rm> PartA = Custom(LineStream) {
       logic
         state: {
@@ -62,7 +63,9 @@ composite childtracker {
                 }
                 timeasdf += (rstring) s;*/
                 
-                submit({time=time, id=ch, rm=tracks[ch].room}, PartA);
+                if (!(tracks[ch] == "E")) {
+                  submit({time=time, id=ch, rm=tracks[ch].room}, PartA);
+                }
               }
               previous = current;
             } else {
@@ -72,6 +75,7 @@ composite childtracker {
         }          
     }
 
+    //generate missing child reports if a child has not been seen for more than 15 minutes
     stream<rstring current, rstring id, rstring lastseen, rstring lastroom, rstring phone> PartB = Custom(LineStream) {
       logic
         state: {
@@ -362,9 +366,11 @@ composite childtracker {
                 timeasdf += "0";
               }
               timeasdf += (rstring) s;
-              
+
+
               for (rstring rm in outputs) {
-                submit({time=timeasdf, room=rm, children=size(outputs[rm])}, PartD1);
+                mutable int32 lesize = size(outputs[rm]);
+                submit({time=timeasdf, room=rm, children=lesize}, PartD1);
               }
               previous = current;
             } else {
