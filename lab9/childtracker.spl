@@ -34,18 +34,14 @@ composite childtracker {
           parseNumber(second,components[2]);
 
           mutable int64 current = hour*60l*60l + minute*60l + (int64) second;
-
           tracks[childid] = {time=current, room=toroom};
-
           if (previous == -1l) {
             previous = current;
           } else {
             if (current - previous > 5l*60l) {
-              previous = current;
               //output!
-
-             for (rstring k in tracks) {
-                mutable int64 t = tracks[k].time;
+             for (rstring ch in tracks) {
+                /*mutable int64 t = tracks[k].time;
                 int64 s = t % 60l;
                 t = t / 60l;
                 minute = t % 60l;
@@ -64,10 +60,11 @@ composite childtracker {
                 if (s < 10l) {
                   timeasdf += "0";
                 }
-                timeasdf += (rstring) s;
+                timeasdf += (rstring) s;*/
                 
-                submit({time=timeasdf, id=k, rm=tracks[k].room}, PartA);
+                submit({time=time, id=ch, rm=tracks[k].room}, PartA);
               }
+              previous = current;
             } else {
               //nothing. just keep collecting.
             }
@@ -78,19 +75,16 @@ composite childtracker {
     stream<rstring current, rstring id, rstring lastseen, rstring lastroom, rstring phone> PartB = Custom(LineStream) {
       logic
         state: {
-
           //map of childid, timestamp
           mutable map<rstring, int64> tracks = {};
-
           //map of childid, lastRoomSeen
           mutable map<rstring, rstring> rooms = {};
-
           //map of childid, alarmsounded
           mutable map<rstring, boolean> alarmed = {};
         }
 
         onTuple LineStream : {
-      //Linestream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
+          //Linestream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
           mutable int64 hour = -1;
           mutable int64 minute = -1;
           mutable float64 second = -1;
@@ -102,19 +96,17 @@ composite childtracker {
 
           mutable int64 current = hour*60l*60l + minute*60l + (int64) second;
 
-          //should we check the difference before updating? Only edge case is if a single child has > 15 minutes between two records with no others in between
           tracks[childid] = current;
+          //this is how we know if we've already called the parent.
           alarmed[childid] = false;
           rooms[childid] = toroom;
 
           //gives us the value of the current time
           for (rstring ch in tracks) {
-
             //compare NOW to the last sensor datum for the child and see if it's been 15 minutes
             if (current - tracks[ch] > 15l*60l) {
               //danger!
 
-              //all this string parsing was just helpful for debugging. remove before submission.
               mutable int64 t = tracks[ch];
               int64 s = t % 60l;
               t = t / 60l;
@@ -138,7 +130,7 @@ composite childtracker {
               
               //mutable rstring asdf = "time last seen: " + timeasdf + ". current time is " + time;
               if (alarmed[ch]) {
-
+                //an alarm has already been sounded
               } else {
                 mutable int32 err = 0;
                 mutable uint64 fp = fopen("ChildDetails.csv", "read", err);
@@ -171,7 +163,7 @@ composite childtracker {
         }
 
         onTuple LineStream : {
-      //Linestream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
+          //Linestream: <rstring time, rstring sensorid, rstring childid, rstring fromroom, rstring toroom>
           mutable int64 hour = -1;
           mutable int64 minute = -1;
           mutable float64 second = -1;
@@ -198,7 +190,6 @@ composite childtracker {
             if (current - tracks[ch] > 5l*60l) {
               //danger!
 
-              //all this string parsing was just helpful for debugging. remove before submission.
               mutable int64 t = tracks[ch];
               int64 s = t % 60l;
               t = t / 60l;
@@ -221,7 +212,6 @@ composite childtracker {
               timeasdf += (rstring) s;
               
               //mutable rstring asdf = "been here since " + timeasdf + ". current time is " + time;
-
               if (alarmed[ch]) {
 
               } else {
@@ -237,7 +227,7 @@ composite childtracker {
                     break;
                   }
                 }
-                submit({time=time, id=ch, phone=ph}, PartC);
+                submit({time=timeasdf, id=ch, phone=ph}, PartC);
                 alarmed[ch] = true;
               }
             }
