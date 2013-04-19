@@ -298,7 +298,7 @@ composite childtracker {
                   }*/
                 }
               }
-/*              for (rstring rm in exits) {
+              for (rstring rm in exits) {
                 for (rstring ch in exits[rm]) {
                   if (exits[rm][ch] >= previous) {
                     //output
@@ -309,7 +309,7 @@ composite childtracker {
                     }
                   }
                 }
-              }*/
+              }
 
               mutable int64 t = current;
               int64 s = t % 60l;
