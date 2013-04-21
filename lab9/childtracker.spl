@@ -188,7 +188,7 @@ composite childtracker {
           }
           if (fromroom == "26") {
             removeM(tracks, childid);
-            removeM(tracks, childid);
+            removeM(alarmed, childid);
             //alarmed[childid] = false;
           }
 
