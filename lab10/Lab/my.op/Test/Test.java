@@ -11,9 +11,10 @@ public class Test extends AbstractOperator {
   }
   public void process(StreamingInput stream, Tuple tuple) throws Exception {
     final StreamingOutput<OutputTuple> output = getOutput(0);
-    // Submit any tuple with count greater than 3
-    if( tuple.getInt("count") > 3 ) {
-      output.submit(tuple);
-    }
+    String tstring = tuple.getString("time");
+    String nstring = tuple.getString("name");
+  
+    
+    output.submit(tuple);
   }
 }
