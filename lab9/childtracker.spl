@@ -1,4 +1,8 @@
-//TO RUN: ./output/bin/standalone stream="SensorData.csv" details="ChildDetails.csv"
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
+//\\//\\TO RUN: ./output/bin/standalone stream="SensorData.csv" details="ChildDetails.csv"//\\//
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
+//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 use spl.file::*; 
 composite childtracker {
   graph 
@@ -189,7 +193,6 @@ composite childtracker {
           if (fromroom == "26") {
             removeM(tracks, childid);
             removeM(alarmed, childid);
-            //alarmed[childid] = false;
           }
 
           //gives us the value of the current time
@@ -247,7 +250,6 @@ composite childtracker {
     stream<rstring time, rstring room, int32 children> RoomStatsStream = Custom(SensorDataStream) {
       logic
         state: {
-
           //TODO on other parts do I need to remove child from map when they exit the room?
 
           //map of room, map of childid, entry time
