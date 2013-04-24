@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <toolkitModel xmlns="http://www.ibm.com/xmlns/prod/streams/spl/toolkit" productVersion="2.0.0.4" xmlns:common="http://www.ibm.com/xmlns/prod/streams/spl/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-  <toolkit name="Lab" requiredProductVersion="2.0" version="1.0.0">
+  <toolkit name="DeSimilarDocs" requiredProductVersion="2.0" version="1.0.0">
     <description>Toolkit Description</description>
     <uriTable>
-      <uri index="2" value="my.op/Test"/>
-      <uri index="1" value="Test.spl"/>
+      <uri index="2" value="my.op/DeSimilarDocs"/>
+      <uri index="1" value="DeSimilarDocs.spl"/>
     </uriTable>
     <namespace name="my.op">
-      <primitiveOp language="Java" modelUriIndex="2" name="Test" public="true">
+      <primitiveOp language="Java" modelUriIndex="2" name="DeSimilarDocs" public="true">
         <parameter expressionMode="Constant" name="vmArg" optional="true" type="rstring">
           <description>Command line options passed to the Java Virtual Machine at startup</description>
         </parameter>
@@ -19,7 +19,7 @@
       </primitiveOp>
     </namespace>
     <namespace name="">
-      <compositeOp column="11" line="3" name="Main" potentialMain="true" uriIndex="1"/>
+      <compositeOp column="11" line="2" name="Main" potentialMain="true" uriIndex="1"/>
     </namespace>
   </toolkit>
 

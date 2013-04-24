@@ -1,16 +1,15 @@
-// namespace for the operator
-use my.op::Test;
+use my.op::DeSimilarDocs;
 composite Main {
   graph
   stream<rstring time, rstring name> Input = FileSource() {
     param
       format : csv;
-      file : "/datasets/Lab10/Documents/Filenames.txt";
+      file : "/datasets/Lab10/Filenames.txt";
   }
   
-  stream<int32 count> Output = Test(Input) {}
+  stream<rstring time, rstring name> Output = DeSimilarDocs(Input) {}
   () as Writer = FileSink(Output) {
     param file : "result.csv";
-    flush : 1u;
+    format : csv;
   }
 }
