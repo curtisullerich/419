@@ -5,7 +5,7 @@ composite Main {
   stream<rstring time, rstring name> Input = FileSource() {
     param
       format : csv;
-      file : "/datasetes/Lab10/Documents/Filenames.txt";
+      file : "/datasets/Lab10/Documents/Filenames.txt";
   }
   
   stream<int32 count> Output = Test(Input) {}
