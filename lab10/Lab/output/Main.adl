@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<applicationSet xmlns="http://www.ibm.com/xmlns/prod/streams/application" name="Main.appset" productVersion="2.0.0.4" xmlns:svar="http://www.ibm.com/xmlns/prod/streams/sharedvar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <description>Main application set</description>
+
+  <application applicationDirectory="../." applicationScope="Default" checkpointDirectory="../data/ckpt" dataDirectory="../data" logLevel="error" name="Main" outputDirectory="/home/curtisu/419/lab10/Lab/output" version="1.0.0">
+    <libraries/>
+    <hostpools>
+      <hostpool index="0" membershipMode="shared" name="$default"/>
+    </hostpools>
+    <tupleTypes>
+      <tupleType index="0">
+        <attribute name="count" type="int32"/>
+      </tupleType>
+    </tupleTypes>
+    <pes>
+      <pe class="BeJwz9cwrKC2JN_1MvLQHT4UWZJalF8QBniQjd" index="0" language="C++" logLevel="error" optimized="false" relocatable="false" restartable="false">
+        <envVars/>
+        <executable digest="3Y3KL1fmLtVGAiHZKodGx0yYSUc=" dynamicLoad="true">
+          <wrapper>none</wrapper>
+          <executableUri>bin/BeJwz9cwrKC2JN_1MvLQHT4UWZJalF8QBniQjd.dpe</executableUri>
+          <arguments></arguments>
+          <dependencies/>
+        </executable>
+        <operInstances>
+          <operInstance class="Input" definitionIndex="0" index="0" name="Input" singleThreadedOnInputs="true" singleThreadedOnOutputs="true">
+            <resources>
+              <poolLocation poolIndex="0"/>
+            </resources>
+            <runtimeConstants>
+              <runtimeConstant name="lit$0" value="10"/>
+              <runtimeConstant name="lit$1" value="0"/>
+            </runtimeConstants>
+            <inputPorts/>
+            <outputPorts>
+              <outputPort index="0" isMutable="false" name="Input" streamName="Input" tupleTypeIndex="0">
+                <intraPeConnection iportIndex="0" operInstanceIndex="1"/>
+              </outputPort>
+            </outputPorts>
+          </operInstance>
+          <operInstance class="Output" definitionIndex="1" index="1" name="Output" singleThreadedOnInputs="true" singleThreadedOnOutputs="false">
+            <resources>
+              <poolLocation poolIndex="0"/>
+            </resources>
+            <runtimeConstants/>
+            <inputPorts>
+              <inputPort index="0" isMutable="false" name="Input" tupleTypeIndex="0">
+                <intraPeConnection operInstanceIndex="0" oportIndex="0"/>
+              </inputPort>
+            </inputPorts>
+            <outputPorts>
+              <outputPort index="0" isMutable="true" name="Output" streamName="Output" tupleTypeIndex="0">
+                <intraPeConnection iportIndex="0" operInstanceIndex="2"/>
+              </outputPort>
+            </outputPorts>
+          </operInstance>
+          <operInstance class="Writer" definitionIndex="2" index="2" name="Writer" singleThreadedOnInputs="false" singleThreadedOnOutputs="false">
+            <resources>
+              <poolLocation poolIndex="0"/>
+            </resources>
+            <runtimeConstants>
+              <runtimeConstant name="lit$0" value="&quot;result.csv&quot;"/>
+              <runtimeConstant name="lit$1" value="1"/>
+            </runtimeConstants>
+            <inputPorts>
+              <inputPort index="0" isMutable="false" name="Output" tupleTypeIndex="0">
+                <intraPeConnection operInstanceIndex="1" oportIndex="0"/>
+              </inputPort>
+            </inputPorts>
+            <outputPorts/>
+          </operInstance>
+        </operInstances>
+        <inputPorts/>
+        <outputPorts/>
+      </pe>
+    </pes>
+    <operDefinitions>
+      <operDefinition index="0" kind="spl.utility::Beacon"/>
+      <operDefinition index="1" kind="my.op::Test"/>
+      <operDefinition index="2" kind="spl.adapter::FileSink">
+        <customMetricIndicies>
+          <customMetricIndex>0</customMetricIndex>
+        </customMetricIndicies>
+      </operDefinition>
+    </operDefinitions>
+    <composites>
+      <sourceUris>
+        <uri index="0" path="file:///home/curtisu/419/lab10/Lab/Test.spl"/>
+      </sourceUris>
+      <compositeOpers>
+        <compositeOper endLine="16" index="0" kind="Main" numberOfInputPorts="0" numberOfOutputPorts="0" sourceIndex="0" startLine="3" toolkitIndex="0">
+          <description>Main Composite</description>
+        </compositeOper>
+      </compositeOpers>
+      <compositeOperInstances>
+        <compositeOperInstance compositeOperIndex="0" endLine="16" index="3" name="Main" sourceIndex="0" startLine="3">
+          <primitiveOperInstance endLine="9" index="0" kind="spl.utility::Beacon" name="Input" sourceIndex="0" startLine="5" toolkitIndex="1">
+            <outputPorts>
+              <port index="0">
+                <connections>
+                  <connection operIndex="1" operName="Output" portIndex="0" portKind="input"/>
+                </connections>
+              </port>
+            </outputPorts>
+          </primitiveOperInstance>
+          <primitiveOperInstance endLine="11" index="1" kind="my.op::Test" name="Output" sourceIndex="0" startLine="11" toolkitIndex="0">
+            <inputPorts>
+              <port index="0">
+                <connections>
+                  <connection operIndex="0" operName="Input" portIndex="0" portKind="output"/>
+                </connections>
+              </port>
+            </inputPorts>
+            <outputPorts>
+              <port index="0">
+                <connections>
+                  <connection operIndex="2" operName="Writer" portIndex="0" portKind="input"/>
+                </connections>
+              </port>
+            </outputPorts>
+          </primitiveOperInstance>
+          <primitiveOperInstance endLine="15" index="2" kind="spl.adapter::FileSink" name="Writer" sourceIndex="0" startLine="12" toolkitIndex="1">
+            <inputPorts>
+              <port index="0">
+                <connections>
+                  <connection operIndex="1" operName="Output" portIndex="0" portKind="output"/>
+                </connections>
+              </port>
+            </inputPorts>
+          </primitiveOperInstance>
+        </compositeOperInstance>
+      </compositeOperInstances>
+    </composites>
+    <toolkits>
+      <toolkit index="0" name="Lab" uri="file:///home/curtisu/419/lab10/Lab" version="1.0.0"/>
+      <toolkit index="1" name="spl" uri="file:///opt/ibm/InfoSphereStreams/toolkits/spl" version="1.0.1"/>
+    </toolkits>
+    <customMetrics>
+      <customMetric index="0" kind="Counter" name="nFilesOpened">
+        <description>Number of files opened by the FileSink operator</description>
+      </customMetric>
+    </customMetrics>
+  </application>
+
+</applicationSet>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<toolkitModel xmlns="http://www.ibm.com/xmlns/prod/streams/spl/toolkit" productVersion="2.0.0.4" xmlns:common="http://www.ibm.com/xmlns/prod/streams/spl/common" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+  <toolkit name="Test" requiredProductVersion="2.0" version="1.0.0">
+    <description>Toolkit Description</description>
+    <uriTable>
+      <uri index="2" value="my.op/Test"/>
+      <uri index="1" value="Test.spl"/>
+    </uriTable>
+    <namespace name="my.op">
+      <primitiveOp language="Java" modelUriIndex="2" name="Test" public="true">
+        <parameter expressionMode="Constant" name="vmArg" optional="true" type="rstring">
+          <description>Command line options passed to the Java Virtual Machine at startup</description>
+        </parameter>
+        <inputPort minNumPorts="0" optional="true" windowPunctInputMode="Oblivious">
+          <windowPolicy>NonWindowed</windowPolicy>
+        </inputPort>
+        <outputPort expressionMode="Nonexistent" minNumPorts="0" optional="true" windowPunctOutputMode="Generating"/>
+      </primitiveOp>
+    </namespace>
+    <namespace name="">
+      <compositeOp column="11" line="3" name="Main" potentialMain="true" uriIndex="1"/>
+    </namespace>
+  </toolkit>
+
+</toolkitModel>

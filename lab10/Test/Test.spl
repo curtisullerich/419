@@ -1,0 +1,16 @@
+// namespace for the operator
+use my.op::Test;
+composite Main {
+  graph
+  stream<int32 count> Input = Beacon() {
+    logic state : mutable int32 n = 0;
+    param iterations : 10u;
+    output Input: count = n++;
+  }
+    // “Test” is the user-defined operator
+  stream<int32 count> Output = Test(Input) {}
+  () as Writer = FileSink(Output) {
+    param file : "result.csv";
+    flush : 1u;
+  }
+}
