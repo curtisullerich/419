@@ -36,10 +36,7 @@ public class DeSimilarDocs extends AbstractOperator {
 
 
     int current = parseTime(tstring);
-    if (this.previous == -1) {
-      //very first tuple
-      this.previous = current;
-    } else if (current/(60*60) >= lastHour + 1) {
+    if (current/(60*60) >= lastHour + 1) {
       //one hour has passed
 
       //compare all documents and clear the buffers once done
