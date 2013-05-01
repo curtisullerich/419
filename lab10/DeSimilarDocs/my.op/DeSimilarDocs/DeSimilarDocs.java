@@ -152,7 +152,7 @@ public class DeSimilarDocs extends AbstractOperator {
     String comps[] = time.split(":");
     int hour = Integer.parseInt(comps[0]);
     int minute = Integer.parseInt(comps[1]);
-    int second = Integer.parseInt(comps[2]);
+    int second = (int) Double.parseDouble(comps[2]);
     return hour*60*60+minute*60+second;
   }
 
