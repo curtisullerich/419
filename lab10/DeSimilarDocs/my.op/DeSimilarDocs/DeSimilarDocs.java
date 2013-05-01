@@ -41,7 +41,7 @@ public class DeSimilarDocs extends AbstractOperator {
         hashes[l] = h;
       }
     }
-    String key = "":
+    String key = "";
     for (int i = 0; i < hashes.length; i++) {
       key += hashes[i] + "-";
     }
@@ -82,7 +82,7 @@ public class DeSimilarDocs extends AbstractOperator {
     Map<String, Integer> stragglers = new Map<String, Integer>();
 
     Map.Entry<String, Integer> entry;
-    for (Iterator<Map.Entry<String, Integer> it = counts.entrySet().iterator(); it.hasNext(); entry = it.next()) {
+    for (Iterator<Map.Entry<String, Integer>> it = counts.entrySet().iterator(); it.hasNext(); entry = it.next()) {
       if (entry.getValue() < max*.9) {
         stragglers.put(entry);
         it.remove(entry);
