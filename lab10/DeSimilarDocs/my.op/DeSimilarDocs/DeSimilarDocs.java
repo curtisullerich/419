@@ -46,7 +46,7 @@ public class DeSimilarDocs extends AbstractOperator {
       key += hashes[i] + "-";
     }
     if (this.counts.containsKey(key)) {
-      this.counts.put(key, docmap.get(key) + 1);
+      this.counts.put(key, counts.get(key) + 1);
     } else {
       this.counts.put(key, 1);
     }
@@ -84,7 +84,7 @@ public class DeSimilarDocs extends AbstractOperator {
     Map.Entry<String, Integer> entry;
     for (Iterator<Map.Entry<String, Integer>> it = counts.entrySet().iterator(); it.hasNext(); entry = it.next()) {
       if (entry.getValue() < max*.9) {
-        stragglers.put(entry);
+        stragglers.put(entry.getKey(), entry.getValue());
         it.remove(entry);
       }
     }
