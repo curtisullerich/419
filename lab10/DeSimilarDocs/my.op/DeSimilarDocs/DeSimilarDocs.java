@@ -46,12 +46,12 @@ public class DeSimilarDocs extends AbstractOperator {
       key += hashes[i] + "-";
     }
     if (this.counts.containsKey(key)) {
-      this.counts.put(docmap.get(key) + 1);
+      this.counts.put(key, docmap.get(key) + 1);
     } else {
       this.counts.put(key, 1);
     }
     if (!this.docmap.containsKey(key)) {
-      this.docmap.put(new String(file));
+      this.docmap.put(key, nstring);
     }
 
     int current = parseTime(tstring);
@@ -104,10 +104,12 @@ public class DeSimilarDocs extends AbstractOperator {
   }
 
   public boolean matchesBy(int threshold, String one, String two) {
+    String onehashes[] = one.split("-");
+    String twohashes[] = two.split("-");
 
     int count = 0;
-    for (int i = 0; i < hashes.length; i++) {
-      if (this.hashes[i].equals(other.hashes[i])) {
+    for (int i = 0; i < onehashes.length; i++) {
+      if (onehashes[i].equals(twohashes[i])) {
         count++;
       }
     }
