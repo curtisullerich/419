@@ -1,5 +1,4 @@
-all: java spl
-
+all: java spl 
 
 java:
 	#spl-make-operator --kind java
@@ -8,3 +7,6 @@ java:
 
 spl:
 	sc -T -M Main
+
+
+
