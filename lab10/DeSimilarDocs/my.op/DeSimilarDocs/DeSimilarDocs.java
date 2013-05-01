@@ -71,7 +71,7 @@ public class DeSimilarDocs extends AbstractOperator {
     if (minute < 10) {
       str += "0";
     }
-    str += minute = ":";
+    str += minute + ":";
     if (second < 10) {
       str += "0";
     }
