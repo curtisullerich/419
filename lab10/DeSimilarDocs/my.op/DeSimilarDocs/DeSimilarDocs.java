@@ -17,8 +17,8 @@ public class DeSimilarDocs extends AbstractOperator {
 
   public DeSimilarDocs() {
     k = 9;
-    this.docmap = new Map<String, String>(50);
-    this.counts = new Map<String, Integer>(50);
+    this.docmap = new HashMap<String, String>(50);
+    this.counts = new HashMap<String, Integer>(50);
     this.previous = -1;
   }
 
@@ -45,12 +45,12 @@ public class DeSimilarDocs extends AbstractOperator {
     for (int i = 0; i < hashes.length; i++) {
       key += hashes[i] + "-";
     }
-    if (this.counts.contains(key)) {
+    if (this.counts.containsKey(key)) {
       this.counts.put(docmap.get(key) + 1);
     } else {
       this.counts.put(key, 1);
     }
-    if (!this.docmap.contains(key)) {
+    if (!this.docmap.containsKey(key)) {
       this.docmap.put(new String(file));
     }
 
@@ -79,7 +79,7 @@ public class DeSimilarDocs extends AbstractOperator {
       } 
     } 
 
-    Map<String, Integer> stragglers = new Map<String, Integer>();
+    Map<String, Integer> stragglers = new HashMap<String, Integer>();
 
     Map.Entry<String, Integer> entry;
     for (Iterator<Map.Entry<String, Integer>> it = counts.entrySet().iterator(); it.hasNext(); entry = it.next()) {
