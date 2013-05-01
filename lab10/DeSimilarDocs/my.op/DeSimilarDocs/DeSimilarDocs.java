@@ -10,13 +10,15 @@ import java.nio.*;
 
 public class DeSimilarDocs extends AbstractOperator {
 
-  private ArrayList<int[]> results;
+  private Map<String, String> docmap; //key is concatenated hashes, value is representative document
+  private Map<String, Integer> counts; //key is concatenated hashes, value is number of docs in this cluster
   private int previous;
   private int k;
 
   public DeSimilarDocs() {
     k = 9;
-    this.results = new ArrayList<int[]>(50);
+    this.docmap = new Map<String, String>(50);
+    this.counts = new Map<String, Integer>(50);
     this.previous = -1;
   }
 
@@ -39,7 +41,18 @@ public class DeSimilarDocs extends AbstractOperator {
         hashes[l] = h;
       }
     }
-    this.results.add(hashes);
+    String key = "":
+    for (int i = 0; i < hashes.length; i++) {
+      key += hashes[i] + "-";
+    }
+    if (this.counts.contains(key)) {
+      this.counts.put(docmap.get(key) + 1);
+    } else {
+      this.counts.put(key, 1);
+    }
+    if (!this.docmap.contains(key)) {
+      this.docmap.put(new String(file));
+    }
 
     int current = parseTime(tstring);
     if (this.previous == -1) {
@@ -57,9 +70,51 @@ public class DeSimilarDocs extends AbstractOperator {
   }
 
   private void processResults() {
+    int max = 0;
+    String maxkey = "";
+    for (String key : counts.keySet()) {
+      if (counts.get(key) > max) {
+        max = counts.get(key);
+        maxkey = key;
+      } 
+    } 
+
+    Map<String, Integer> stragglers = new Map<String, Integer>();
+
+    Map.Entry<String, Integer> entry;
+    for (Iterator<Map.Entry<String, Integer> it = counts.entrySet().iterator(); it.hasNext(); entry = it.next()) {
+      if (entry.getValue() < max*.9) {
+        stragglers.put(entry);
+        it.remove(entry);
+      }
+    }
+
+    for (String key : stragglers.keySet()) {
+      for (int i = k; i > 0; i--) {
+        for (String ckey : counts.keySet()) {
+          if (matchesBy(i, key, ckey)) {
+            counts.put(key, counts.get(key) +1);
+          }
+        }
+      }
+    }
 
 
     //output.submit(tuple);
+  }
+
+  public boolean matchesBy(int threshold, String one, String two) {
+
+    int count = 0;
+    for (int i = 0; i < hashes.length; i++) {
+      if (this.hashes[i].equals(other.hashes[i])) {
+        count++;
+      }
+    }
+    if (count >= threshold) {
+      return true;
+    }
+    return false;
   }
 
   private String timeToString(int time) {
