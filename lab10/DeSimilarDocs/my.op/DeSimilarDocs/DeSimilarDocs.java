@@ -111,7 +111,7 @@ public class DeSimilarDocs extends AbstractOperator {
     } catch (FileNotFoundException e) {
 
     }
-
+    return null;
   }
 
  /*
