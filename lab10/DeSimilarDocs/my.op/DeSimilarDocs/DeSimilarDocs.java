@@ -81,7 +81,7 @@ public class DeSimilarDocs extends AbstractOperator {
 
     Map<String, Integer> stragglers = new HashMap<String, Integer>();
 
-    Map.Entry<String, Integer> entry;
+    Map.Entry<String, Integer> entry = null;
     for (Iterator<Map.Entry<String, Integer>> it = counts.entrySet().iterator(); it.hasNext(); entry = it.next()) {
       if (entry.getValue() < max*.9) {
         stragglers.put(entry.getKey(), entry.getValue());
