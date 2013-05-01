@@ -72,6 +72,8 @@ public class DeSimilarDocs extends AbstractOperator {
           o.setString("name", docmap.get(akey) + " " + counts.get(akey));
           output.submit(o);
         }
+        docmap = new HashMap<String, String>(50);
+        counts = new HashMap<String, Integer>(50);
       }
     }
   }
