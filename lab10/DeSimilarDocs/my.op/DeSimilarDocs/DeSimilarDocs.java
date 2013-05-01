@@ -65,6 +65,13 @@ public class DeSimilarDocs extends AbstractOperator {
 
         //compare all documents and clear the buffers once done
         processResults();
+        //everything should be ready to output
+        for (String key : docmap) {
+          OutputTuple o = new OutputTuple();
+          o.setString("time", tstring);
+          o.setStrign("name", docmap.get(key));
+          output.submit(o);
+        }
       }
     }
   }
