@@ -14,12 +14,13 @@ public class DeSimilarDocs extends AbstractOperator {
   private Map<String, Integer> counts; //key is concatenated hashes, value is number of docs in this cluster
   private int previous;
   private int k;
+  private in currentHour;
 
   public DeSimilarDocs() {
     k = 9;
+    currentHour = 0;
     this.docmap = new HashMap<String, String>(50);
     this.counts = new HashMap<String, Integer>(50);
-    this.previous = -1;
   }
 
   @Override
@@ -32,49 +33,47 @@ public class DeSimilarDocs extends AbstractOperator {
     String tstring = tuple.getString("time");
     String nstring = tuple.getString("name");
 
-    // name is a filename, so read it in and put it in a buffer
-    byte[] file = readFile(nstring);
-    int hashes[] = new int[4];
-    for (int j = 0; j < file.length; j++) {
-      for (int l = 0; l < hashes.length; l++) {
-        int h = hash(file, j, this.k, l);
-        hashes[l] = h;
-      }
-    }
-    String key = "";
-    for (int i = 0; i < hashes.length; i++) {
-      key += hashes[i] + "-";
-    }
-    if (this.counts.containsKey(key)) {
-      this.counts.put(key, counts.get(key) + 1);
-    } else {
-      this.counts.put(key, 1);
-    }
-    if (!this.docmap.containsKey(key)) {
-      this.docmap.put(key, nstring);
-    }
 
     int current = parseTime(tstring);
     if (this.previous == -1) {
       //very first tuple
       this.previous = current;
+    } else if (current - previous >= 60*60) {
+      //one hour has passed
+
+      //compare all documents and clear the buffers once done
+      processResults();
+      //everything should be ready to output
+      for (String akey : docmap.keySet()) {
+        OutputTuple o = output.newTuple();
+        o.setString("time", tstring);
+        o.setString("name", docmap.get(akey) + " " + counts.get(akey));
+        output.submit(o);
+      }
+      docmap = new HashMap<String, String>(50);
+      counts = new HashMap<String, Integer>(50);
+      previous = current;
     } else {
-
-      if (current - previous >= 60*60) {
-        //one hour has passed
-
-        //compare all documents and clear the buffers once done
-        processResults();
-        //everything should be ready to output
-        for (String akey : docmap.keySet()) {
-          OutputTuple o = output.newTuple();
-          o.setString("time", tstring);
-          o.setString("name", docmap.get(akey) + " " + counts.get(akey));
-          output.submit(o);
+      // name is a filename, so read it in and put it in a buffer
+      byte[] file = readFile(nstring);
+      int hashes[] = new int[4];
+      for (int j = 0; j < file.length; j++) {
+        for (int l = 0; l < hashes.length; l++) {
+          int h = hash(file, j, this.k, l);
+          hashes[l] = h;
         }
-        docmap = new HashMap<String, String>(50);
-        counts = new HashMap<String, Integer>(50);
-        previous = current;
+      }
+      String key = "";
+      for (int i = 0; i < hashes.length; i++) {
+        key += hashes[i] + "-";
+      }
+      if (this.counts.containsKey(key)) {
+        this.counts.put(key, counts.get(key) + 1);
+      } else {
+        this.counts.put(key, 1);
+      }
+      if (!this.docmap.containsKey(key)) {
+        this.docmap.put(key, nstring);
       }
     }
   }
