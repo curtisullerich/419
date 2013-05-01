@@ -5,6 +5,7 @@ import com.ibm.streams.operator.StreamingInput;
 import com.ibm.streams.operator.Tuple;
 import com.ibm.streams.operator.StreamingOutput;
 import java.io.*;
+import java.util.*;
 
 public class DeSimilarDocs extends AbstractOperator {
 
