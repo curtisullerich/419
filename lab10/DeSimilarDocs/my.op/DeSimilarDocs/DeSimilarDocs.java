@@ -52,29 +52,29 @@ public class DeSimilarDocs extends AbstractOperator {
       counts = new HashMap<String, Integer>(50);
       lastHour++;
 //      previous = current;
-    } else {
-      // name is a filename, so read it in and put it in a buffer
-      byte[] file = readFile(nstring);
-      int hashes[] = new int[4];
-      for (int j = 0; j < file.length; j++) {
-        for (int l = 0; l < hashes.length; l++) {
-          int h = hash(file, j, this.k, l);
-          hashes[l] = h;
-        }
-      }
-      String key = "";
-      for (int i = 0; i < hashes.length; i++) {
-        key += hashes[i] + "-";
-      }
-      if (this.counts.containsKey(key)) {
-        this.counts.put(key, counts.get(key) + 1);
-      } else {
-        this.counts.put(key, 1);
-      }
-      if (!this.docmap.containsKey(key)) {
-        this.docmap.put(key, nstring);
+    }
+    // name is a filename, so read it in and put it in a buffer
+    byte[] file = readFile(nstring);
+    int hashes[] = new int[4];
+    for (int j = 0; j < file.length; j++) {
+      for (int l = 0; l < hashes.length; l++) {
+        int h = hash(file, j, this.k, l);
+        hashes[l] = h;
       }
     }
+    String key = "";
+    for (int i = 0; i < hashes.length; i++) {
+      key += hashes[i] + "-";
+    }
+    if (this.counts.containsKey(key)) {
+      this.counts.put(key, counts.get(key) + 1);
+    } else {
+      this.counts.put(key, 1);
+    }
+    if (!this.docmap.containsKey(key)) {
+      this.docmap.put(key, nstring);
+    }
+  
   }
 
   private void processResults() {
