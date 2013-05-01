@@ -92,26 +92,19 @@ public class DeSimilarDocs extends AbstractOperator {
     return hour*60*60+minute*60+second;
   }
 
-  public byte[] readFile(String name) {
+  public byte[] readFile(String name) throws java.io.IOException {
+    File file = new File(name);
+    RandomAccessFile f = new RandomAccessFile(file, "r");
 
-    try {    
-      File file = new File(name);
-      RandomAccessFile f = new RandomAccessFile(file, "r");
-      try {
-        // Get and check length
-        long longlength = f.length();
-        int length = (int) longlength;
-        // Read file and return data
-        byte[] data = new byte[length];
-        f.readFully(data);
-        return data;
-      } finally {
-        f.close();
-      }
-    } catch (FileNotFoundException e) {
+    // Get and check length
+    long longlength = f.length();
+    int length = (int) longlength;
+    // Read file and return data
+    byte[] data = new byte[length];
+    f.readFully(data);
+    f.close();
+    return data;
 
-    }
-    return null;
   }
 
  /*
