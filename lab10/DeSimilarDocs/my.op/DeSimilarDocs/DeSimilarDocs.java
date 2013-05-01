@@ -59,7 +59,9 @@ public class DeSimilarDocs extends AbstractOperator {
     for (int j = 0; j < file.length; j++) {
       for (int l = 0; l < hashes.length; l++) {
         int h = hash(file, j, this.k, l);
-        hashes[l] = h;
+        if (h < hashes[l] || hashes[l] == 0) {
+          hashes[l] = h;
+        }
       }
     }
     String key = "";
@@ -220,7 +222,7 @@ public class DeSimilarDocs extends AbstractOperator {
       h *= m;
     }
 
-    h ^= h >> 13;
+    h ^= h >> 13sh;
     h *= m;
     h ^= h >> 15;
 
