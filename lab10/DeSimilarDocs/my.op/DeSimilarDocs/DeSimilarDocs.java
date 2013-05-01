@@ -195,7 +195,7 @@ public class DeSimilarDocs extends AbstractOperator {
     while(len >= 4)
     {
 
-      ByteBuffer buf = ByteBuffer.wrap(Arrays.copyOfRange(content, offset+start, offset+start + 4));
+      ByteBuffer buf = ByteBuffer.wrap(Arrays.copyOfRange(content, offset+start, offset+stop + 4));
       //ByteBuffer buf = ByteBuffer.wrap(content.substring(offset+start, offset+start + 4).getBytes());
 
       int k = buf.getInt();
