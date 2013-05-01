@@ -14,12 +14,14 @@ public class DeSimilarDocs extends AbstractOperator {
   private Map<String, Integer> counts; //key is concatenated hashes, value is number of docs in this cluster
   private int previous;
   private int k;
+  private int lastHour;
 
   public DeSimilarDocs() {
     k = 9;
     this.docmap = new HashMap<String, String>(50);
     this.counts = new HashMap<String, Integer>(50);
     previous = -1;
+    lastHour = 0;
   }
 
   @Override
@@ -37,7 +39,7 @@ public class DeSimilarDocs extends AbstractOperator {
     if (this.previous == -1) {
       //very first tuple
       this.previous = current;
-    } else if (current >= previous/(60*60)) {
+    } else if (current/(60*60) >= lastHour + 1) {
       //one hour has passed
 
       //compare all documents and clear the buffers once done
@@ -51,7 +53,8 @@ public class DeSimilarDocs extends AbstractOperator {
       }
       docmap = new HashMap<String, String>(50);
       counts = new HashMap<String, Integer>(50);
-      previous = current;
+      lastHour++;
+//      previous = current;
     } else {
       // name is a filename, so read it in and put it in a buffer
       byte[] file = readFile(nstring);
