@@ -60,7 +60,7 @@ public class DeSimilarDocs extends AbstractOperator {
     String firstShingle = line.substring(0, k);
     //System.out.println("first shingle: " + firstShingle);
     for (int j = 0; j < hashes.length; j++) {
-      hashes[j] = Map_One.hash(firstShingle.getBytes(), j);
+      hashes[j] = hash(firstShingle.getBytes(), j);
     }
     //int seeds[] = {42, 17, 100, 7, 13, 21};
     //hash all shingles
