@@ -37,7 +37,7 @@ public class DeSimilarDocs extends AbstractOperator {
     if (this.previous == -1) {
       //very first tuple
       this.previous = current;
-    } else if (current - previous >= 60*60) {
+    } else if (current >= previous%(60*60)) {
       //one hour has passed
 
       //compare all documents and clear the buffers once done
