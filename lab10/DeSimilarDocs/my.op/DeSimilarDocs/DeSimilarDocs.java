@@ -4,8 +4,9 @@ import com.ibm.streams.operator.OutputTuple;
 import com.ibm.streams.operator.StreamingInput;
 import com.ibm.streams.operator.Tuple;
 import com.ibm.streams.operator.StreamingOutput;
-import java.io.*;
 import java.util.*;
+import java.io.*;
+import java.nio.*;
 
 public class DeSimilarDocs extends AbstractOperator {
 
@@ -71,7 +72,7 @@ public class DeSimilarDocs extends AbstractOperator {
     if (hour < 10) {
       str += "0";
     }
-    time += hour + ":";
+    str += hour + ":";
     if (minute < 10) {
       str += "0";
     }
@@ -85,9 +86,9 @@ public class DeSimilarDocs extends AbstractOperator {
 
   private int parseTime(String time) {
     String comps[] = time.split(":");
-    int hour = comps[0];
-    int minute = comps[1];
-    int second = comps[2];
+    int hour = Integer.parseInt(comps[0]);
+    int minute = Integer.parseInt(comps[1]);
+    int second = Integer.parseInt(comps[2]);
     return hour*60*60+minute*60+second;
   }
 
