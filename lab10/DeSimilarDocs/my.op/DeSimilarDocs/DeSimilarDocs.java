@@ -55,15 +55,26 @@ public class DeSimilarDocs extends AbstractOperator {
     }
     // name is a filename, so read it in and put it in a buffer
     byte[] file = readFile(nstring);
-    int hashes[] = new int[4];
-    for (int j = 0; j < file.length; j++) {
-      for (int l = 0; l < hashes.length; l++) {
-        int h = hash(file, j, this.k, l);
-        if (h < hashes[l] || hashes[l] == 0) {
-          hashes[l] = h;
+    String line = new String(file);
+    int hashes[] = new int[k];
+    String firstShingle = line.substring(0, k);
+    //System.out.println("first shingle: " + firstShingle);
+    for (int j = 0; j < hashes.length; j++) {
+      hashes[j] = Map_One.hash(firstShingle.getBytes(), j);
+    }
+    //int seeds[] = {42, 17, 100, 7, 13, 21};
+    //hash all shingles
+    for (int i = 0; i < line.length()-k+1; i++) {
+      String shingle = line.substring(i, i+k);
+      for (int j = 0; j < hashes.length; j++) {
+        int h = hash(shingle.getBytes(), j);
+        //always keep the mins
+        if (h < hashes[j]) {
+          hashes[j] = h;
         }
       }
     }
+
     String key = "";
     for (int i = 0; i < hashes.length; i++) {
       key += hashes[i] + "-";
@@ -181,54 +192,51 @@ public class DeSimilarDocs extends AbstractOperator {
   * to help with minhashing. New hash functions can be derived by using a 
   * new seed value.
   */
-  private int hash(byte[] content, int start, int stop, int seed){
+    private static int hash(byte[] b_con, int i_seed){
 
-    int m = 0x5bd1e995;
-    int r = 24;
+      String content = new String(b_con);
+      //System.out.println("hashing with content = " + content);
+      int seed = i_seed;
+      int m = 0x5bd1e995;
+      int r = 24;
 
-    int len = stop - start;
-    byte[] work_array = null;
+      int len = content.length();
+      byte[] work_array = null;
 
-    int h = seed ^ len;
+      int h = seed ^ content.length();
 
-    int offset = 0;
+      int offset = 0;
 
-    work_array = new byte[4];
-    while(len >= 4)
-    {
+      work_array = new byte[4];
+      while( len >= 4)
+      {
+        ByteBuffer buf = ByteBuffer.wrap(content.substring(offset, offset + 4).getBytes());
 
-      work_array[0] = content[start+offset+0];
-      work_array[1] = content[start+offset+1];
-      work_array[2] = content[start+offset+2];
-      work_array[3] = content[start+offset+3];
-      ByteBuffer buf = ByteBuffer.wrap(work_array);
-      //ByteBuffer buf = ByteBuffer.wrap(content.substring(offset+start, offset+start + 4).getBytes());
+        int k = buf.getInt();
+        k = k * m;
+        k ^= k >> r;
+        k *= m;
+        h *= m;
+        h ^= k;
 
-      int k = buf.getInt();
-      k = k * m;
-      k ^= k >> r;
-      k *= m;
+        offset += 4;
+        len -= 4;
+      }
+
+      switch(len){
+        case 3: h ^= work_array[2] << 16;
+        case 2: h ^= work_array[1] << 8;
+        case 1: h ^= work_array[0];
+        h *= m;
+      }
+
+      h ^= h >> 13;
       h *= m;
-      h ^= k;
+      h ^= h >> 15;
 
-      offset += 4;
-      len -= 4;
+      return h;
     }
-
-    switch(len){
-      case 3: h ^= work_array[2] << 16;
-      case 2: h ^= work_array[1] << 8;
-      case 1: h ^= work_array[0];
-      h *= m;
-    }
-
-    h ^= h >> 13;
-    h *= m;
-    h ^= h >> 15;
-
-    return h;
   }
-
   /**
    * A class to contain a particular cluster and compute similarity between other clusters.
    *
