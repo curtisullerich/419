@@ -93,8 +93,13 @@ public class DeSimilarDocs extends AbstractOperator {
   }
 
   public byte[] readFile(String name) {
-    File file = new File(name);
-    RandomAccessFile f = new RandomAccessFile(file, "r");
+
+    try {    
+      File file = new File(name);
+      RandomAccessFile f = new RandomAccessFile(file, "r");
+    } catch (FileNotFoundException e) {
+
+    }
     try {
       // Get and check length
       long longlength = f.length();
