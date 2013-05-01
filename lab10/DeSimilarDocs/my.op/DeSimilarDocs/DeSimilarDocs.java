@@ -14,13 +14,12 @@ public class DeSimilarDocs extends AbstractOperator {
   private Map<String, Integer> counts; //key is concatenated hashes, value is number of docs in this cluster
   private int previous;
   private int k;
-  private in currentHour;
 
   public DeSimilarDocs() {
     k = 9;
-    currentHour = 0;
     this.docmap = new HashMap<String, String>(50);
     this.counts = new HashMap<String, Integer>(50);
+    previous = -1;
   }
 
   @Override
