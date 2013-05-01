@@ -222,7 +222,7 @@ public class DeSimilarDocs extends AbstractOperator {
       h *= m;
     }
 
-    h ^= h >> 13sh;
+    h ^= h >> 13;
     h *= m;
     h ^= h >> 15;
 
