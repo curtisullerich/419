@@ -40,12 +40,12 @@ public class DeSimilarDocs extends AbstractOperator {
       //one hour has passed
 
       //compare all documents and clear the buffers once done
-      processResults();
+      //processResults();
       //everything should be ready to output
       for (String akey : docmap.keySet()) {
         OutputTuple o = output.newTuple();
         o.setString("time", tstring);
-        o.setString("name", docmap.get(akey) + " " + docmap.keySet().size());
+        o.setString("name", "key: " + key + " filename: " + docmap.get(akey) + " cluster size: " + docmap.keySet().size());
         output.submit(o);
       }
       docmap = new HashMap<String, String>(50);
@@ -87,7 +87,7 @@ public class DeSimilarDocs extends AbstractOperator {
       } 
     } 
 
-    /*
+
     Map<String, Integer> stragglers = new HashMap<String, Integer>();
 
     Map.Entry<String, Integer> entry;
@@ -108,7 +108,7 @@ public class DeSimilarDocs extends AbstractOperator {
         }
       }
     }
-*/
+
 
     //output.submit(tuple);
   }
