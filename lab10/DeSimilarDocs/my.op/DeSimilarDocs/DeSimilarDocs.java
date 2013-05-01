@@ -87,6 +87,7 @@ public class DeSimilarDocs extends AbstractOperator {
       } 
     } 
 
+    /*
     Map<String, Integer> stragglers = new HashMap<String, Integer>();
 
     Map.Entry<String, Integer> entry;
@@ -107,7 +108,7 @@ public class DeSimilarDocs extends AbstractOperator {
         }
       }
     }
-
+*/
 
     //output.submit(tuple);
   }
