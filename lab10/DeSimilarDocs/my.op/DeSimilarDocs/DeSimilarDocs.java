@@ -9,11 +9,13 @@ import java.util.*;
 
 public class DeSimilarDocs extends AbstractOperator {
 
-  private ArrayList<Byte[]> buffers;
+  private ArrayList<Integer[]> results;
   private int previous;
+  private int k;
 
   public DeSimilarDocs() {
-    this.buffers = new ArrayList<Byte[]>(50);
+    k = 9;
+    this.results = new ArrayList<Integer[]>(50);
     this.previous = -1;
   }
 
@@ -21,11 +23,22 @@ public class DeSimilarDocs extends AbstractOperator {
   public void initialize(OperatorContext context) throws Exception {
     super.initialize(context);
   }
+
   public void process(StreamingInput stream, Tuple tuple) throws Exception {
     final StreamingOutput<OutputTuple> output = getOutput(0);
     String tstring = tuple.getString("time");
     String nstring = tuple.getString("name");
 
+    // name is a filename, so read it in and put it in a buffer
+    byte[] file = readFile(nstring);
+    int hashes[] = new int[4];
+    for (int j = 0; j < file.length; j++) {
+      for (int l = 0; l < hashes.length; l++) {
+        int h = hash(file, j, this.k, l);
+        hashes[l] = h;
+      }
+    }
+    this.results.add(hashes);
 
     int current = parseTime(tstring);
     if (this.previous == -1) {
@@ -36,25 +49,16 @@ public class DeSimilarDocs extends AbstractOperator {
       if (current - previous >= 60*60) {
         //one hour has passed
 
-        //compare all documents
-        processBuffers();
+        //compare all documents and clear the buffers once done
+        processResults();
       }
     }
   }
 
-  private void processBuffers() {
-    int k = 9;
-    int hashes[] = new int[4];
+  private void processResults() {
 
-    for (int i = 0; i < buffers.size(); i++) {
-      for (int j = 0; j < buffers.get(i).length; j++) {
-        for (int l = 0; l < hashes.length; l++) {
-          int h = hash(i, j, k, l);
-        }
-      }
-    }
 
-    output.submit(tuple);
+    //output.submit(tuple);
   }
 
   private String timeToString(int time) {
@@ -88,6 +92,7 @@ public class DeSimilarDocs extends AbstractOperator {
   }
 
   public byte[] readFile(String name) {
+    File file = new File(name);
     RandomAccessFile f = new RandomAccessFile(file, "r");
     try {
       // Get and check length
@@ -108,9 +113,8 @@ public class DeSimilarDocs extends AbstractOperator {
   * to help with minhashing. New hash functions can be derived by using a 
   * new seed value.
   */
-  private int hash(int listindex, int start, int stop, int seed){
+  private int hash(byte[] content, int start, int stop, int seed){
 
-    byte[] content = this.buffers.get(listindex);
     int m = 0x5bd1e995;
     int r = 24;
 
