@@ -10,13 +10,13 @@ import java.nio.*;
 
 public class DeSimilarDocs extends AbstractOperator {
 
-  private ArrayList<Integer[]> results;
+  private ArrayList<int[]> results;
   private int previous;
   private int k;
 
   public DeSimilarDocs() {
     k = 9;
-    this.results = new ArrayList<Integer[]>(50);
+    this.results = new ArrayList<int[]>(50);
     this.previous = -1;
   }
 
