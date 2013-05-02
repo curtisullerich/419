@@ -126,8 +126,8 @@ public class DeSimilarDocs extends AbstractOperator {
   }
 
   public boolean matchesBy(int threshold, String one, String two) {
-    String onehashes[] = one.substring(0, one.length-1).split("-");
-    String twohashes[] = two.substring(0, two.length-1).split("-");
+    String onehashes[] = one.substring(0, one.length()-1).split("-");
+    String twohashes[] = two.substring(0, two.length()-1).split("-");
 
     int count = 0;
     for (int i = 0; i < onehashes.length; i++) {
