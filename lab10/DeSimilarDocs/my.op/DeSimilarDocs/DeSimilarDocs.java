@@ -39,36 +39,7 @@ public class DeSimilarDocs extends AbstractOperator {
       //one hour has passed
 
       //compare all documents and clear the buffers once done
-    int max = 0;
-    String maxkey = "";
-    for (String key : counts.keySet()) {
-      if (counts.get(key) > max) {
-        max = counts.get(key);
-        maxkey = key;
-      } 
-    } 
-
-    Map<String, Integer> stragglers = new HashMap<String, Integer>();
-    Map<String, Integer> keepers = new HashMap<String, Integer>();
-
-    for (String key : counts.keySet()) {
-      if (counts.get(key) < max*.6) {
-        stragglers.put(key, counts.get(key));
-      } else {
-        keepers.put(key, counts.get(key));
-      }
-    }
-    counts = new HashMap<String, Integer>();
-
-    for (String key : stragglers.keySet()) {
-      for (int i = 4; i > 0; i--) {
-        for (String ckey : keepers.keySet()) {
-          if (matchesBy(i, key, ckey)) {
-            counts.put(ckey, stragglers.get(key) + keepers.get(ckey));
-          }
-        }
-      }
-    }
+      processResults();
       //everything should be ready to output
       for (String akey : counts.keySet()) {
         OutputTuple o = output.newTuple();
@@ -139,6 +110,10 @@ public class DeSimilarDocs extends AbstractOperator {
       }
     }
     counts = new HashMap<String, Integer>();
+
+    if (keepers.keySet().size() != 50) {
+      throw new RuntimeException("adsfadfad");
+    }
 
     for (String key : stragglers.keySet()) {
       for (int i = 4; i > 0; i--) {
