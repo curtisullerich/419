@@ -67,11 +67,11 @@ public class DeSimilarDocs extends AbstractOperator {
     for (int i = 0; i < line.length()-k+1; i++) {
       String shingle = line.substring(i, i+k);
       for (int j = 0; j < hashes.length; j++) {
-        int h = hash(shingle.getBytes(), j);
+        //int h = hash(shingle.getBytes(), j);
         //always keep the mins
-        if (h < hashes[j]) {
-          hashes[j] = h;
-        }
+        //if (h < hashes[j]) {
+        //  hashes[j] = h;
+        //}
       }
     }
 
