@@ -111,12 +111,8 @@ public class DeSimilarDocs extends AbstractOperator {
     }
     counts = new HashMap<String, Integer>();
 
-    if (keepers.keySet().size() != 50) {
-      throw new RuntimeException("adsfadfad");
-    }
-
     for (String key : stragglers.keySet()) {
-      for (int i = 4; i > 0; i--) {
+      hello: for (int i = 4; i > 0; i--) {
         for (String ckey : keepers.keySet()) {
           if (matchesBy(i, key, ckey)) {
             if (counts.containsKey(ckey)) {
@@ -124,6 +120,7 @@ public class DeSimilarDocs extends AbstractOperator {
             } else {
               counts.put(ckey, stragglers.get(key) + keepers.get(ckey));
             }
+            break hello;
           }
         }
       }
