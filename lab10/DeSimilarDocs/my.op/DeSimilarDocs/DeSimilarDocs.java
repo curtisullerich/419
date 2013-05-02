@@ -98,11 +98,13 @@ public class DeSimilarDocs extends AbstractOperator {
         maxkey = key;
       } 
     } 
+    if (max != 100) {
+      throw new RuntimeException("because asdf you");
+    }
 
     Map<String, Integer> stragglers = new HashMap<String, Integer>();
     Map<String, Integer> keepers = new HashMap<String, Integer>();
 
-    Map.Entry<String, Integer> entry;
     for (String key : counts.keySet()) {
       if (counts.get(key) < max*.6) {
         stragglers.put(key, counts.get(key));
@@ -112,7 +114,6 @@ public class DeSimilarDocs extends AbstractOperator {
     }
     counts = new HashMap<String, Integer>();
 
-    Map.Entry<String, Integer> centry;
     for (String key : stragglers.keySet()) {
       for (int i = 4; i > 0; i--) {
         for (String ckey : keepers.keySet()) {
@@ -127,6 +128,9 @@ public class DeSimilarDocs extends AbstractOperator {
   public boolean matchesBy(int threshold, String one, String two) {
     String onehashes[] = one.substring(0, one.length()-1).split("-");
     String twohashes[] = two.substring(0, two.length()-1).split("-");
+    if (onehashes.length != 4) {
+      throw new RuntimeException("hate this");
+    }
 
     int count = 0;
     for (int i = 0; i < onehashes.length; i++) {
