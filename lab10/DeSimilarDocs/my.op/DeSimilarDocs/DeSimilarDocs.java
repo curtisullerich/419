@@ -49,7 +49,7 @@ public class DeSimilarDocs extends AbstractOperator {
   }
 
   public void processPunctuation(StreamingInput<Tuple> port, StreamingData.Punctuation mark) throws Exception {
-    if (mark == Punctuation.FINAL_MARKER) {
+    if (mark == StreamingData.Punctuation.FINAL_MARKER) {
       out();
     }
   }
