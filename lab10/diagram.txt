@@ -1,0 +1,9 @@
+Lab 10 dataflow graph.
+
+-------------------                                      ----------------
+|    FileSource   |--. Input                  Output .---|   FileSink   |
+| (Filenames.txt) |   \                             /    | (result.csv) |
+-------------------    \    -------------------    /     ----------------
+                        \   |  DeSimilarDocs  |   /
+                         `--| (Java operator) |--'
+                            ------------------- 

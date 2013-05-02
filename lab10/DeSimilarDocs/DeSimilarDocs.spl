@@ -8,6 +8,7 @@ composite Main {
       file : "/datasets/Lab10/Filenames.txt";
   }
   
+  //Java custom operator
   stream<rstring time, rstring name> Output = DeSimilarDocs(Input) {}
 
   () as Writer = FileSink(Output) {

@@ -8,14 +8,15 @@ import java.util.*;
 import java.io.*;
 import java.nio.*;
 
+//custom spl operator for processing a stream of documents
+//and clustering them on a per-hour basis
 public class DeSimilarDocs extends AbstractOperator {
 
   private Map<String, String> docmap; //key is concatenated hashes, value is representative document
-  private Map<String, String> timemap; //key is concatenated hashes, value is representative document
+  private Map<String, String> timemap; //key is concatenated hashes, value is timestamp
   private Map<String, Integer> counts; //key is concatenated hashes, value is number of docs in this cluster
-  private int previous;
-  private int k;
-  private int lastHour;
+  private int k; //the number of characters per shingle
+  private int lastHour; //the number of the last hour output
 
   public DeSimilarDocs() {
     k = 9;
@@ -32,6 +33,7 @@ public class DeSimilarDocs extends AbstractOperator {
   }
 
 
+  //helper function to dump the output collected so far
   private void out() throws Exception {
     final StreamingOutput<OutputTuple> output = getOutput(0);
     //compare all documents and clear the buffers once done
@@ -44,18 +46,23 @@ public class DeSimilarDocs extends AbstractOperator {
       o.setString("name", docmap.get(akey));
       output.submit(o);
     }
+
+    //reset to nothing
     docmap = new HashMap<String, String>(50);
+    timemap = new HashMap<String, String>(50);
     counts = new HashMap<String, Integer>(50);
     lastHour++;
   }
 
+  //accept a tuple and process it
   public void process(StreamingInput stream, Tuple tuple) throws Exception {
     String tstring = tuple.getString("time");
     String nstring = tuple.getString("name");
 
+    //conver the time into number of seconds since midnight
     int current = parseTime(tstring);
     if (current/(60*60) >= lastHour + 1) {
-      //one hour has passed
+      //one hour has passed. output.
       out();
     }
     // name is a filename, so read it in and put it in a buffer
@@ -78,10 +85,12 @@ public class DeSimilarDocs extends AbstractOperator {
       }
     }
 
+    //concatenate
     String key = "";
     for (int i = 0; i < hashes.length; i++) {
       key += hashes[i] + "-";
     }
+
     if (this.counts.containsKey(key)) {
       this.counts.put(key, counts.get(key) + 1);
     } else {
@@ -91,12 +100,16 @@ public class DeSimilarDocs extends AbstractOperator {
       this.docmap.put(key, nstring);
       this.timemap.put(key, tstring);
     }
+
+    //the final tuple. Because it doesn't officiall roll past midnight.
     if (nstring.equals("File-119999")) {
       out();
     }
   
   }
 
+  //helper function to massage the collected statistics for the 
+  //last hour into the desired output format
   private void processResults() {
     int max = 0;
     String maxkey = "";
@@ -110,6 +123,7 @@ public class DeSimilarDocs extends AbstractOperator {
     Map<String, Integer> stragglers = new HashMap<String, Integer>();
     Map<String, Integer> keepers = new HashMap<String, Integer>();
 
+    //split clusters into good and bad
     for (String key : counts.keySet()) {
       if (counts.get(key) < max*.6) {
         stragglers.put(key, counts.get(key));
@@ -121,6 +135,8 @@ public class DeSimilarDocs extends AbstractOperator {
     for (String key : keepers.keySet()) {
       counts.put(key, keepers.get(key));
     }
+
+    //make sure that each file has a home in a large cluster
     for (String key : stragglers.keySet()) {
       hello: for (int i = 3; i > 0; i--) {
         for (String ckey : keepers.keySet()) {
@@ -137,6 +153,7 @@ public class DeSimilarDocs extends AbstractOperator {
     }
   }
 
+  //return true if one and two contain at least threshold matching hashes, '-'-seperated
   public boolean matchesBy(int threshold, String one, String two) {
     String onehashes[] = one.substring(0, one.length()-1).split("-");
     String twohashes[] = two.substring(0, two.length()-1).split("-");
@@ -153,6 +170,7 @@ public class DeSimilarDocs extends AbstractOperator {
     return false;
   }
 
+  //convert the number of seconds into a time
   private String timeToString(int time) {
     int second = time % 60;
     time /= 60;
@@ -175,6 +193,7 @@ public class DeSimilarDocs extends AbstractOperator {
     return str;
   }
 
+  //convert the time string into a number of seconds
   private int parseTime(String time) {
     String comps[] = time.split(":");
     int hour = Integer.parseInt(comps[0]);
@@ -183,6 +202,7 @@ public class DeSimilarDocs extends AbstractOperator {
     return hour*60*60+minute*60+second;
   }
 
+  //read a file into a byte array
   public byte[] readFile(String name) throws java.io.IOException {
     File file = new File(name);
     RandomAccessFile f = new RandomAccessFile("/datasets/Lab10/Documents/" + file, "r");
