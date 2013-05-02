@@ -44,7 +44,8 @@ public class DeSimilarDocs extends AbstractOperator {
       for (String akey : counts.keySet()) {
         OutputTuple o = output.newTuple();
         o.setString("time", tstring);
-        o.setString("name", "key: " + akey + " filename: " + docmap.get(akey) + " cluster size: " + counts.get(akey));
+//        o.setString("name", "key: " + akey + " filename: " + docmap.get(akey) + " cluster size: " + counts.get(akey));
+        o.setString("name", docmap.get(akey));
         output.submit(o);
       }
       docmap = new HashMap<String, String>(50);
