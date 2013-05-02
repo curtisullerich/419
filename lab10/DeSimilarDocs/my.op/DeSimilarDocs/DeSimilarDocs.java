@@ -42,7 +42,7 @@ public class DeSimilarDocs extends AbstractOperator {
       //compare all documents and clear the buffers once done
       processResults();
       //everything should be ready to output
-      for (String akey : docmap.keySet()) {
+      for (String akey : counts.keySet()) {
         OutputTuple o = output.newTuple();
         o.setString("time", tstring);
         o.setString("name", "key: " + akey + " filename: " + docmap.get(akey) + " cluster size: " + counts.get(akey));
