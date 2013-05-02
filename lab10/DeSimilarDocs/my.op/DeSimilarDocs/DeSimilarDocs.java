@@ -1,9 +1,4 @@
-import com.ibm.streams.operator.AbstractOperator;
-import com.ibm.streams.operator.OperatorContext;
-import com.ibm.streams.operator.OutputTuple;
-import com.ibm.streams.operator.StreamingInput;
-import com.ibm.streams.operator.Tuple;
-import com.ibm.streams.operator.StreamingOutput;
+import com.ibm.streams.operator.*;
 import java.util.*;
 import java.io.*;
 import java.nio.*;
