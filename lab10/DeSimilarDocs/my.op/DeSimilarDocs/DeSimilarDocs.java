@@ -40,7 +40,7 @@ public class DeSimilarDocs extends AbstractOperator {
       //one hour has passed
 
       //compare all documents and clear the buffers once done
-      //processResults();
+      processResults();
       //everything should be ready to output
       for (String akey : docmap.keySet()) {
         OutputTuple o = output.newTuple();
