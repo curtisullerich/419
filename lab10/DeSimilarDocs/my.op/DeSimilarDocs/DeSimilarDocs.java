@@ -60,14 +60,14 @@ public class DeSimilarDocs extends AbstractOperator {
     String firstShingle = line.substring(0, k);
     //System.out.println("first shingle: " + firstShingle);
     for (int j = 0; j < hashes.length; j++) {
-      hashes[j] = hash(firstShingle.getBytes(), j);
+      hashes[j] = hash(firstShingle, j);
     }
     //int seeds[] = {42, 17, 100, 7, 13, 21};
     //hash all shingles
     for (int i = 0; i < line.length()-k+1; i++) {
       String shingle = line.substring(i, i+k);
       for (int j = 0; j < hashes.length; j++) {
-        int h = hash(shingle.getBytes(), j);
+        int h = hash(shingle, j);
         //always keep the mins
         if (h < hashes[j]) {
           hashes[j] = h;
@@ -192,9 +192,8 @@ public class DeSimilarDocs extends AbstractOperator {
   * to help with minhashing. New hash functions can be derived by using a 
   * new seed value.
   */
-  private static int hash(byte[] b_con, int i_seed){
+  private static int hash(String content, int i_seed){
 
-    String content = new String(b_con);
     //System.out.println("hashing with content = " + content);
     int seed = i_seed;
     int m = 0x5bd1e995;
