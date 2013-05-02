@@ -23,7 +23,6 @@ public class DeSimilarDocs extends AbstractOperator {
     this.docmap = new HashMap<String, String>(50);
     this.timemap = new HashMap<String, String>(50);
     this.counts = new HashMap<String, Integer>(50);
-    previous = -1;
     lastHour = 0;
   }
 
@@ -55,7 +54,7 @@ public class DeSimilarDocs extends AbstractOperator {
   }
 
   public void processPunctuation(StreamingInput<Tuple> port, StreamingData.Punctuation mark) throws Exception {
-    if (punct == StreamingData.Punctuation.FINAL_MARKER) {
+    if (mark == Punctuation.FINAL_MARKER) {
       out();
     }
   }
