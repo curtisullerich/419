@@ -117,7 +117,7 @@ public class DeSimilarDocs extends AbstractOperator {
       for (int i = 4; i > 0; i--) {
         for (String ckey : keepers.keySet()) {
           if (matchesBy(i, key, ckey)) {
-            counts.put(ckey, stragglers.get(key) + keepers.get(key));
+            counts.put(ckey, stragglers.get(key) + keepers.get(ckey));
           }
         }
       }
