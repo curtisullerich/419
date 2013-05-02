@@ -55,7 +55,7 @@ public class DeSimilarDocs extends AbstractOperator {
     // name is a filename, so read it in and put it in a buffer
     byte[] file = readFile(nstring);
     String line = new String(file);
-    int hashes[] = new int[4];
+    int hashes[] = new int[3];
     String firstShingle = line.substring(0, k);
     //System.out.println("first shingle: " + firstShingle);
     for (int j = 0; j < hashes.length; j++) {
