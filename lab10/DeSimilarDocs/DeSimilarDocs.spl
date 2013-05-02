@@ -4,7 +4,7 @@ composite Main {
   stream<rstring time, rstring name> Input = FileSource() {
     param
       format : csv;
-      file : "/datasets/Lab10/Filenames.txt";
+      file : "/home/curtisu/filenames.txt";
   }
   
   stream<rstring time, rstring name> Output = DeSimilarDocs(Input) {}
