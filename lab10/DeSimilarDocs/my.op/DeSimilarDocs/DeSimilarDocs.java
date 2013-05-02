@@ -32,7 +32,7 @@ public class DeSimilarDocs extends AbstractOperator {
   }
 
 
-  private void out() {
+  private void out() throws Exception {
     final StreamingOutput<OutputTuple> output = getOutput(0);
     //compare all documents and clear the buffers once done
     processResults();
