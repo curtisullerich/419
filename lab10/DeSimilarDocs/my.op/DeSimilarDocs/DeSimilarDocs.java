@@ -34,7 +34,6 @@ public class DeSimilarDocs extends AbstractOperator {
     String tstring = tuple.getString("time");
     String nstring = tuple.getString("name");
 
-
     int current = parseTime(tstring);
     if (current/(60*60) >= lastHour + 1) {
       //one hour has passed
@@ -56,7 +55,7 @@ public class DeSimilarDocs extends AbstractOperator {
     // name is a filename, so read it in and put it in a buffer
     byte[] file = readFile(nstring);
     String line = new String(file);
-    int hashes[] = new int[2];
+    int hashes[] = new int[4];
     String firstShingle = line.substring(0, k);
     //System.out.println("first shingle: " + firstShingle);
     for (int j = 0; j < hashes.length; j++) {
@@ -105,7 +104,7 @@ public class DeSimilarDocs extends AbstractOperator {
     Map.Entry<String, Integer> entry;
     for (Iterator<Map.Entry<String, Integer>> it = counts.entrySet().iterator(); it.hasNext(); ) {
       entry = it.next();
-      if (entry.getValue() < max*.9) {
+      if (entry.getValue() < max*.6) {
         stragglers.put(entry.getKey(), entry.getValue());
         it.remove();
       }
@@ -114,7 +113,7 @@ public class DeSimilarDocs extends AbstractOperator {
     Map.Entry<String, Integer> centry;
     for (Iterator<Map.Entry<String, Integer>> it = stragglers.entrySet().iterator(); it.hasNext(); ) {
       entry = it.next();
-      for (int i = 2; i > 0; i--) {
+      for (int i = 4; i > 0; i--) {
         for (Iterator<Map.Entry<String, Integer>> cit = counts.entrySet().iterator(); cit.hasNext(); ) {
           centry = cit.next();
           if (matchesBy(i, entry.getKey(), centry.getKey())) {
