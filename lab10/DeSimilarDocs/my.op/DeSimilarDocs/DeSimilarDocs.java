@@ -110,7 +110,9 @@ public class DeSimilarDocs extends AbstractOperator {
       }
     }
     counts = new HashMap<String, Integer>();
-
+    for (String key : keepers.keySet()) {
+      counts.put(key, keepers.get(key));
+    }
     for (String key : stragglers.keySet()) {
       hello: for (int i = 4; i > 0; i--) {
         for (String ckey : keepers.keySet()) {
