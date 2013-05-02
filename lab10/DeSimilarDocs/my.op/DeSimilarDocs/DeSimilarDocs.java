@@ -112,16 +112,31 @@ public class DeSimilarDocs extends AbstractOperator {
       }
     }
 
-    for (String key : stragglers.keySet()) {
-      for (int i = k; i > 0; i--) {
-        for (String ckey : counts.keySet()) {
-          if (matchesBy(i, key, ckey)) {
-            counts.put(key, counts.get(key) +1);
+
+    Map.Entry<String, Integer> centry;
+    for (Iterator<Map.Entry<String, Integer>> it = stragglers.entrySet().iterator(); it.hasNext(); ) {
+      entry = it.next();
+      for (int i = 4; i > 0; i--) {
+        for (Iterator<Map.Entry<String, Integer>> cit = counts.entrySet().iterator(); cit.hasNext(); ) {
+          centry = cit.next();
+          if (matchesBy(i, entry.getKey(), centry.getKey())) {
+            counts.put(key, counts.get(ckey)+1);
           }
         }
       }
     }
+/*
 
+    for (String key : stragglers.keySet()) {
+      for (int i = k; i > 0; i--) {
+        for (String ckey : counts.keySet()) {
+          if (matchesBy(i, key, ckey)) {
+            counts.put(key, counts.get(ckey) +1);
+          }
+        }
+      }
+    }
+  */
 
     //output.submit(tuple);
   }
