@@ -54,6 +54,13 @@ public class DeSimilarDocs extends AbstractOperator {
     lastHour++;
   }
 
+  public void processPunctuation(StreamingInput<Tuple> port, StreamingData.Punctuation mark) throws Exception {
+    if (punct == StreamingData.Punctuation.FINAL_MARKER) {
+      out();
+    }
+  }
+
+
   //accept a tuple and process it
   public void process(StreamingInput stream, Tuple tuple) throws Exception {
     String tstring = tuple.getString("time");
@@ -102,9 +109,9 @@ public class DeSimilarDocs extends AbstractOperator {
     }
 
     //the final tuple. Because it doesn't officiall roll past midnight.
-    if (nstring.equals("File-119999")) {
-      out();
-    }
+    //if (nstring.equals("File-119999")) {
+    //  out();
+    //}
   
   }
 
