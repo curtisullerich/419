@@ -120,7 +120,7 @@ public class DeSimilarDocs extends AbstractOperator {
         for (Iterator<Map.Entry<String, Integer>> cit = counts.entrySet().iterator(); cit.hasNext(); ) {
           centry = cit.next();
           if (matchesBy(i, entry.getKey(), centry.getKey())) {
-            counts.put(key, centry.getValue()+1);
+            counts.put(counts.getKey(), centry.getValue()+1);
           }
         }
       }
