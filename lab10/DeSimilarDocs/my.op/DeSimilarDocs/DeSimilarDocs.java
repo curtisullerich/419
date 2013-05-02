@@ -11,6 +11,7 @@ import java.nio.*;
 public class DeSimilarDocs extends AbstractOperator {
 
   private Map<String, String> docmap; //key is concatenated hashes, value is representative document
+  private Map<String, String> timemap; //key is concatenated hashes, value is representative document
   private Map<String, Integer> counts; //key is concatenated hashes, value is number of docs in this cluster
   private int previous;
   private int k;
@@ -19,6 +20,7 @@ public class DeSimilarDocs extends AbstractOperator {
   public DeSimilarDocs() {
     k = 9;
     this.docmap = new HashMap<String, String>(50);
+    this.timemap = new HashMap<String, String>(50);
     this.counts = new HashMap<String, Integer>(50);
     previous = -1;
     lastHour = 0;
@@ -29,6 +31,23 @@ public class DeSimilarDocs extends AbstractOperator {
     super.initialize(context);
   }
 
+
+  private void out() {
+    //compare all documents and clear the buffers once done
+    processResults();
+    //everything should be ready to output
+    for (String akey : counts.keySet()) {
+      OutputTuple o = output.newTuple();
+      o.setString("time", timemap.get(akey));
+      //o.setString("name", "key: " + akey + " filename: " + docmap.get(akey) + " cluster size: " + counts.get(akey));
+      o.setString("name", docmap.get(akey));
+      output.submit(o);
+    }
+    docmap = new HashMap<String, String>(50);
+    counts = new HashMap<String, Integer>(50);
+    lastHour++;
+  }
+
   public void process(StreamingInput stream, Tuple tuple) throws Exception {
     final StreamingOutput<OutputTuple> output = getOutput(0);
     String tstring = tuple.getString("time");
@@ -37,32 +56,16 @@ public class DeSimilarDocs extends AbstractOperator {
     int current = parseTime(tstring);
     if (current/(60*60) >= lastHour + 1) {
       //one hour has passed
-
-      //compare all documents and clear the buffers once done
-      processResults();
-      //everything should be ready to output
-      for (String akey : counts.keySet()) {
-        OutputTuple o = output.newTuple();
-        o.setString("time", tstring);
-//        o.setString("name", "key: " + akey + " filename: " + docmap.get(akey) + " cluster size: " + counts.get(akey));
-        o.setString("name", docmap.get(akey));
-        output.submit(o);
-      }
-      docmap = new HashMap<String, String>(50);
-      counts = new HashMap<String, Integer>(50);
-      lastHour++;
-//      previous = current;
+      out();
     }
     // name is a filename, so read it in and put it in a buffer
     byte[] file = readFile(nstring);
     String line = new String(file);
     int hashes[] = new int[4];
     String firstShingle = line.substring(0, k);
-    //System.out.println("first shingle: " + firstShingle);
     for (int j = 0; j < hashes.length; j++) {
       hashes[j] = hash(firstShingle.getBytes(), j);
     }
-    //int seeds[] = {42, 17, 100, 7, 13, 21};
     //hash all shingles
     for (int i = 0; i < line.length()-k+1; i++) {
       String shingle = line.substring(i, i+k);
@@ -86,6 +89,10 @@ public class DeSimilarDocs extends AbstractOperator {
     }
     if (!this.docmap.containsKey(key)) {
       this.docmap.put(key, nstring);
+      this.timemap.put(key, tstring);
+    }
+    if (nstring.equals("File-119999")) {
+      out();
     }
   
   }
