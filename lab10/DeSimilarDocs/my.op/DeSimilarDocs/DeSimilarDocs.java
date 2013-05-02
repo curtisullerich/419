@@ -39,7 +39,7 @@ public class DeSimilarDocs extends AbstractOperator {
       //one hour has passed
 
       //compare all documents and clear the buffers once done
-      //processResults();
+      processResults();
       //everything should be ready to output
       for (String akey : counts.keySet()) {
         OutputTuple o = output.newTuple();
@@ -55,7 +55,7 @@ public class DeSimilarDocs extends AbstractOperator {
     // name is a filename, so read it in and put it in a buffer
     byte[] file = readFile(nstring);
     String line = new String(file);
-    int hashes[] = new int[3];
+    int hashes[] = new int[4];
     String firstShingle = line.substring(0, k);
     //System.out.println("first shingle: " + firstShingle);
     for (int j = 0; j < hashes.length; j++) {
@@ -100,24 +100,25 @@ public class DeSimilarDocs extends AbstractOperator {
     } 
 
     Map<String, Integer> stragglers = new HashMap<String, Integer>();
+    Map<String, Integer> keepers = new HashMap<String, Integer>();
 
     Map.Entry<String, Integer> entry;
     for (Iterator<Map.Entry<String, Integer>> it = counts.entrySet().iterator(); it.hasNext(); ) {
       entry = it.next();
       if (entry.getValue() < max*.6) {
         stragglers.put(entry.getKey(), entry.getValue());
-        it.remove();
+      } else {
+        keepers.put(entry.getKey(), entry.getValue());
       }
+        it.remove();
     }
 
     Map.Entry<String, Integer> centry;
-    for (Iterator<Map.Entry<String, Integer>> it = stragglers.entrySet().iterator(); it.hasNext(); ) {
-      entry = it.next();
+    for (String key : stragglers.keySet()) {
       for (int i = 4; i > 0; i--) {
-        for (Iterator<Map.Entry<String, Integer>> cit = counts.entrySet().iterator(); cit.hasNext(); ) {
-          centry = cit.next();
-          if (matchesBy(i, entry.getKey(), centry.getKey())) {
-            counts.put(centry.getKey(), centry.getValue()+1);
+        for (String ckey : keepers.keySet()) {
+          if (matchesBy(i, key, ckey)) {
+            counts.put(ckey, counts.get(ckey)+1);
           }
         }
       }
@@ -125,8 +126,8 @@ public class DeSimilarDocs extends AbstractOperator {
   }
 
   public boolean matchesBy(int threshold, String one, String two) {
-    String onehashes[] = one.split("-");
-    String twohashes[] = two.split("-");
+    String onehashes[] = one.substring(0, one.length-1).split("-");
+    String twohashes[] = two.substring(0, two.length-1).split("-");
 
     int count = 0;
     for (int i = 0; i < onehashes.length; i++) {
