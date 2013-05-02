@@ -103,22 +103,21 @@ public class DeSimilarDocs extends AbstractOperator {
     Map<String, Integer> keepers = new HashMap<String, Integer>();
 
     Map.Entry<String, Integer> entry;
-    for (Iterator<Map.Entry<String, Integer>> it = counts.entrySet().iterator(); it.hasNext(); ) {
-      entry = it.next();
-      if (entry.getValue() < max*.6) {
-        stragglers.put(entry.getKey(), entry.getValue());
+    for (String key : counts.keySet()) {
+      if (counts.get(key) < max*.6) {
+        stragglers.put(key, counts.get(key));
       } else {
-        keepers.put(entry.getKey(), entry.getValue());
+        keepers.put(key, counts.get(key));
       }
-        it.remove();
     }
+    counts = new HashMap<String, Integer>();
 
     Map.Entry<String, Integer> centry;
     for (String key : stragglers.keySet()) {
       for (int i = 4; i > 0; i--) {
         for (String ckey : keepers.keySet()) {
           if (matchesBy(i, key, ckey)) {
-            counts.put(ckey, counts.get(ckey)+1);
+            counts.put(ckey, stragglers.get(key) + keepers.get(key));
           }
         }
       }
