@@ -40,12 +40,12 @@ public class DeSimilarDocs extends AbstractOperator {
       //one hour has passed
 
       //compare all documents and clear the buffers once done
-      processResults();
+      //processResults();
       //everything should be ready to output
       for (String akey : docmap.keySet()) {
         OutputTuple o = output.newTuple();
         o.setString("time", tstring);
-        o.setString("name", "key: " + akey + " filename: " + docmap.get(akey) + " cluster size: " + counts.get(akey));
+        o.setString("name", "key: " + akey + " filename: " + docmap.get(akey) + " cluster size: " + docmap.keySet().size());
         output.submit(o);
       }
       docmap = new HashMap<String, String>(50);
@@ -55,15 +55,26 @@ public class DeSimilarDocs extends AbstractOperator {
     }
     // name is a filename, so read it in and put it in a buffer
     byte[] file = readFile(nstring);
-    int hashes[] = new int[4];
-    for (int j = 0; j < file.length; j++) {
-      for (int l = 0; l < hashes.length; l++) {
-        int h = hash(file, j, this.k, l);
-        if (h < hashes[l] || hashes[l] == 0) {
-          hashes[l] = h;
+    String line = new String(file);
+    int hashes[] = new int[k];
+    String firstShingle = line.substring(0, k);
+    //System.out.println("first shingle: " + firstShingle);
+    for (int j = 0; j < hashes.length; j++) {
+      hashes[j] = hash(firstShingle.getBytes(), j);
+    }
+    //int seeds[] = {42, 17, 100, 7, 13, 21};
+    //hash all shingles
+    for (int i = 0; i < line.length()-k+1; i++) {
+      String shingle = line.substring(i, i+k);
+      for (int j = 0; j < hashes.length; j++) {
+        int h = hash(shingle.getBytes(), j);
+        //always keep the mins
+        if (h < hashes[j]) {
+          hashes[j] = h;
         }
       }
     }
+
     String key = "";
     for (int i = 0; i < hashes.length; i++) {
       key += hashes[i] + "-";
@@ -181,28 +192,25 @@ public class DeSimilarDocs extends AbstractOperator {
   * to help with minhashing. New hash functions can be derived by using a 
   * new seed value.
   */
-  private int hash(byte[] content, int start, int stop, int seed){
+  private static int hash(byte[] b_con, int i_seed){
 
+    String content = new String(b_con);
+    //System.out.println("hashing with content = " + content);
+    int seed = i_seed;
     int m = 0x5bd1e995;
     int r = 24;
 
-    int len = stop - start;
+    int len = content.length();
     byte[] work_array = null;
 
-    int h = seed ^ len;
+    int h = seed ^ content.length();
 
     int offset = 0;
 
     work_array = new byte[4];
-    while(len >= 4)
+    while( len >= 4)
     {
-
-      work_array[0] = content[start+offset+0];
-      work_array[1] = content[start+offset+1];
-      work_array[2] = content[start+offset+2];
-      work_array[3] = content[start+offset+3];
-      ByteBuffer buf = ByteBuffer.wrap(work_array);
-      //ByteBuffer buf = ByteBuffer.wrap(content.substring(offset+start, offset+start + 4).getBytes());
+      ByteBuffer buf = ByteBuffer.wrap(content.substring(offset, offset + 4).getBytes());
 
       int k = buf.getInt();
       k = k * m;
@@ -228,62 +236,4 @@ public class DeSimilarDocs extends AbstractOperator {
 
     return h;
   }
-
-  /**
-   * A class to contain a particular cluster and compute similarity between other clusters.
-   *
-   */
-  public class Datum {
-    //a representative document
-    public String doc;
-    //the list of minhashes for this cluster
-    public String[] hashes;
-    //the list of ids in this cluster
-    public ArrayList<String> ids;
-
-    public Datum(String doc, String[] hashes, String[] ids) {
-      this.doc = doc;
-      this.hashes = hashes;
-      this.ids = new ArrayList<String>();
-      this.ids.addAll(Arrays.asList(ids));
-    }
-
-    //return the jaccard similarity between this and other
-    public double jaccard(Datum other) {
-      Set<String> first = new HashSet<String>();
-      Set<String> union = new HashSet<String>();
-      int k = 9;
-      for (int i = 0; i < this.doc.length()-k; i++) {
-        first.add(this.doc.substring(i, i+k));
-        union.add(this.doc.substring(i, i+k));
-      }
-      for (int i = 0; i < other.doc.length()-k; i++) {
-        union.add(other.doc.substring(i, i+k));
-        if (!first.contains(other.doc.substring(i, i+k))) {
-          first.remove(other.doc.substring(i, i+k));
-        }
-      }
-      double jac = (double) first.size() / (double) union.size();
-      return jac;
-    }
-
-    //return true if this and other contain at least threshold common minhashes
-    public boolean matchesBy(int threshold, Datum other) {
-      if (this.hashes.length != other.hashes.length) {
-        throw new IllegalArgumentException("Data had different number of hashes.");
-      }
-      int count = 0;
-      for (int i = 0; i < hashes.length; i++) {
-        if (this.hashes[i].equals(other.hashes[i])) {
-          count++;
-        }
-      }
-      if (count >= threshold) {
-        return true;
-      }
-      return false;
-    }
-
-  }
-
 }
