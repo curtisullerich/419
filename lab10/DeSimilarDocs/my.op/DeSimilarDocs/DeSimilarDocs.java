@@ -56,7 +56,7 @@ public class DeSimilarDocs extends AbstractOperator {
     // name is a filename, so read it in and put it in a buffer
     byte[] file = readFile(nstring);
     String line = new String(file);
-    int hashes[] = new int[10];
+    int hashes[] = new int[3];
     String firstShingle = line.substring(0, k);
     //System.out.println("first shingle: " + firstShingle);
     for (int j = 0; j < hashes.length; j++) {
@@ -116,7 +116,7 @@ public class DeSimilarDocs extends AbstractOperator {
     Map.Entry<String, Integer> centry;
     for (Iterator<Map.Entry<String, Integer>> it = stragglers.entrySet().iterator(); it.hasNext(); ) {
       entry = it.next();
-      for (int i = 10; i > 0; i--) {
+      for (int i = 3; i > 0; i--) {
         for (Iterator<Map.Entry<String, Integer>> cit = counts.entrySet().iterator(); cit.hasNext(); ) {
           centry = cit.next();
           if (matchesBy(i, entry.getKey(), centry.getKey())) {
