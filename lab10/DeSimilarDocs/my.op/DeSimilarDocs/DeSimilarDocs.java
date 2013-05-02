@@ -33,6 +33,7 @@ public class DeSimilarDocs extends AbstractOperator {
 
 
   private void out() {
+    final StreamingOutput<OutputTuple> output = getOutput(0);
     //compare all documents and clear the buffers once done
     processResults();
     //everything should be ready to output
@@ -49,7 +50,6 @@ public class DeSimilarDocs extends AbstractOperator {
   }
 
   public void process(StreamingInput stream, Tuple tuple) throws Exception {
-    final StreamingOutput<OutputTuple> output = getOutput(0);
     String tstring = tuple.getString("time");
     String nstring = tuple.getString("name");
 
